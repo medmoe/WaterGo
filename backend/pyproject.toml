@@ -68,6 +68,11 @@ ignore = [
 # Preserve types, even if a file imports `from __future__ import annotations`.
 keep-runtime-typing = true
 
+[tool.ruff.lint.per-file-ignores]
+# SQLModel needs quoted forward references / typing.Optional for relationship
+# attributes that point at classes defined later in the module.
+"app/models.py" = ["UP037", "UP045"]
+
 [tool.coverage.run]
 source = ["app"]
 dynamic_context = "test_function"

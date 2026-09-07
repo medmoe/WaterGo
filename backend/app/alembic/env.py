@@ -19,10 +19,18 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 # target_metadata = None
 
+from geoalchemy2 import alembic_helpers  # noqa
+
 from app.models import SQLModel  # noqa
 from app.core.config import settings # noqa
 
 target_metadata = SQLModel.metadata
+
+
+def _include_object(obj, name, type_, reflected, compare_to):
+    # Ignore PostGIS-managed objects (spatial_ref_sys, spatial indexes, the
+    # geometry_columns view, ...) so autogenerate/`alembic check` stay clean.
+    return alembic_helpers.include_object(obj, name, type_, reflected, compare_to)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -48,7 +56,12 @@ def run_migrations_offline():
     """
     url = get_url()
     context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True, compare_type=True
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        compare_type=True,
+        include_object=_include_object,
+        render_item=alembic_helpers.render_item,
     )
 
     with context.begin_transaction():
@@ -73,7 +86,11 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata, compare_type=True
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=True,
+            include_object=_include_object,
+            render_item=alembic_helpers.render_item,
         )
 
         with context.begin_transaction():

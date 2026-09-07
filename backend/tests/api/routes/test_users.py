@@ -5,9 +5,9 @@ from sqlmodel import Session, select
 
 from app import crud
 from app.core.config import settings
-from app.models import User
+from app.models import User, UserRole
 from tests.utils.user import create_random_user, get_auth_headers_for_user
-from tests.utils.utils import random_email
+from tests.utils.utils import random_phone_number
 
 
 def test_get_users_superuser_me(
@@ -17,8 +17,8 @@ def test_get_users_superuser_me(
     current_user = r.json()
     assert current_user
     assert current_user["is_active"] is True
-    assert current_user["is_superuser"]
-    assert current_user["email"] == settings.FIRST_SUPERUSER
+    assert current_user["role"] == "admin"
+    assert current_user["phone_number"] == settings.FIRST_SUPERUSER_PHONE
 
 
 def test_get_users_normal_user_me(
@@ -28,15 +28,15 @@ def test_get_users_normal_user_me(
     current_user = r.json()
     assert current_user
     assert current_user["is_active"] is True
-    assert current_user["is_superuser"] is False
-    assert current_user["email"] == settings.EMAIL_TEST_USER
+    assert current_user["role"] == "customer"
+    assert current_user["phone_number"] == settings.TEST_USER_PHONE
 
 
-def test_create_user_new_email(
+def test_create_user_new_phone(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
-    username = random_email()
-    data = {"email": username}
+    phone = random_phone_number()
+    data = {"phone_number": phone, "role": "driver"}
     r = client.post(
         f"{settings.API_V1_STR}/users/",
         headers=superuser_token_headers,
@@ -44,9 +44,10 @@ def test_create_user_new_email(
     )
     assert 200 <= r.status_code < 300
     created_user = r.json()
-    user = crud.get_user_by_email(session=db, email=username)
+    user = crud.get_user_by_phone(session=db, phone_number=phone)
     assert user
-    assert user.email == created_user["email"]
+    assert user.phone_number == created_user["phone_number"]
+    assert user.role == UserRole.driver
 
 
 def test_get_existing_user_as_superuser(
@@ -58,8 +59,7 @@ def test_get_existing_user_as_superuser(
         headers=superuser_token_headers,
     )
     assert 200 <= r.status_code < 300
-    api_user = r.json()
-    assert api_user["email"] == user.email
+    assert r.json()["phone_number"] == user.phone_number
 
 
 def test_get_non_existing_user_as_superuser(
@@ -76,13 +76,9 @@ def test_get_non_existing_user_as_superuser(
 def test_get_existing_user_current_user(client: TestClient, db: Session) -> None:
     user = create_random_user(db)
     headers = get_auth_headers_for_user(user)
-    r = client.get(
-        f"{settings.API_V1_STR}/users/{user.id}",
-        headers=headers,
-    )
+    r = client.get(f"{settings.API_V1_STR}/users/{user.id}", headers=headers)
     assert 200 <= r.status_code < 300
-    api_user = r.json()
-    assert api_user["email"] == user.email
+    assert r.json()["phone_number"] == user.phone_number
 
 
 def test_get_existing_user_permissions_error(
@@ -99,11 +95,11 @@ def test_get_existing_user_permissions_error(
     assert r.json() == {"detail": "The user doesn't have enough privileges"}
 
 
-def test_create_user_existing_username(
+def test_create_user_existing_phone(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
     user = create_random_user(db)
-    data = {"email": user.email}
+    data = {"phone_number": user.phone_number}
     r = client.post(
         f"{settings.API_V1_STR}/users/",
         headers=superuser_token_headers,
@@ -115,7 +111,7 @@ def test_create_user_existing_username(
 def test_create_user_by_normal_user(
     client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
-    data = {"email": random_email()}
+    data = {"phone_number": random_phone_number()}
     r = client.post(
         f"{settings.API_V1_STR}/users/",
         headers=normal_user_token_headers,
@@ -134,52 +130,36 @@ def test_retrieve_users(
     assert len(all_users["data"]) > 1
     assert "count" in all_users
     for item in all_users["data"]:
-        assert "email" in item
+        assert "phone_number" in item
 
 
 def test_update_user_me(
     client: TestClient, normal_user_token_headers: dict[str, str]
 ) -> None:
-    full_name = "Updated Name"
-    email = random_email()
-    data = {"full_name": full_name, "email": email}
+    data = {"full_name": "Updated Name"}
     r = client.patch(
         f"{settings.API_V1_STR}/users/me",
         headers=normal_user_token_headers,
         json=data,
     )
     assert r.status_code == 200
-    updated_user = r.json()
-    assert updated_user["email"] == email
-    assert updated_user["full_name"] == full_name
-
-
-def test_update_user_me_email_exists(
-    client: TestClient, normal_user_token_headers: dict[str, str], db: Session
-) -> None:
-    user = create_random_user(db)
-    data = {"email": user.email}
-    r = client.patch(
-        f"{settings.API_V1_STR}/users/me",
-        headers=normal_user_token_headers,
-        json=data,
-    )
-    assert r.status_code == 409
-    assert r.json()["detail"] == "User with this email already exists"
+    assert r.json()["full_name"] == "Updated Name"
 
 
 def test_update_user(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
     user = create_random_user(db)
-    data = {"full_name": "Updated_full_name"}
+    data = {"full_name": "Updated_full_name", "role": "dispatcher"}
     r = client.patch(
         f"{settings.API_V1_STR}/users/{user.id}",
         headers=superuser_token_headers,
         json=data,
     )
     assert r.status_code == 200
-    assert r.json()["full_name"] == "Updated_full_name"
+    body = r.json()
+    assert body["full_name"] == "Updated_full_name"
+    assert body["role"] == "dispatcher"
 
 
 def test_update_user_not_exists(
@@ -195,19 +175,19 @@ def test_update_user_not_exists(
     assert r.json()["detail"] == "The user with this id does not exist in the system"
 
 
-def test_update_user_email_exists(
+def test_update_user_phone_exists(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
     user = create_random_user(db)
     user2 = create_random_user(db)
-    data = {"email": user2.email}
+    data = {"phone_number": user2.phone_number}
     r = client.patch(
         f"{settings.API_V1_STR}/users/{user.id}",
         headers=superuser_token_headers,
         json=data,
     )
     assert r.status_code == 409
-    assert r.json()["detail"] == "User with this email already exists"
+    assert r.json()["detail"] == "A user with this phone number already exists"
 
 
 def test_delete_user_me(client: TestClient, db: Session) -> None:
@@ -220,7 +200,7 @@ def test_delete_user_me(client: TestClient, db: Session) -> None:
     assert db.exec(select(User).where(User.id == user_id)).first() is None
 
 
-def test_delete_user_me_as_superuser(
+def test_delete_user_me_as_admin(
     client: TestClient, superuser_token_headers: dict[str, str]
 ) -> None:
     r = client.delete(
@@ -228,10 +208,10 @@ def test_delete_user_me_as_superuser(
         headers=superuser_token_headers,
     )
     assert r.status_code == 403
-    assert r.json()["detail"] == "Super users are not allowed to delete themselves"
+    assert r.json()["detail"] == "Admins are not allowed to delete themselves"
 
 
-def test_delete_user_super_user(
+def test_delete_user_as_admin(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
     user = create_random_user(db)
@@ -255,17 +235,19 @@ def test_delete_user_not_found(
     assert r.json()["detail"] == "User not found"
 
 
-def test_delete_user_current_super_user_error(
+def test_delete_user_current_admin_error(
     client: TestClient, superuser_token_headers: dict[str, str], db: Session
 ) -> None:
-    super_user = crud.get_user_by_email(session=db, email=settings.FIRST_SUPERUSER)
-    assert super_user
+    admin = crud.get_user_by_phone(
+        session=db, phone_number=settings.FIRST_SUPERUSER_PHONE
+    )
+    assert admin
     r = client.delete(
-        f"{settings.API_V1_STR}/users/{super_user.id}",
+        f"{settings.API_V1_STR}/users/{admin.id}",
         headers=superuser_token_headers,
     )
     assert r.status_code == 403
-    assert r.json()["detail"] == "Super users are not allowed to delete themselves"
+    assert r.json()["detail"] == "Admins are not allowed to delete themselves"
 
 
 def test_delete_user_without_privileges(

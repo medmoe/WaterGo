@@ -36,7 +36,8 @@ export class UsersService {
     /**
      * Create User
      *
-     * Create new user.
+     * Create a new user (dispatcher/driver/admin accounts are created here by an
+     * admin; customers self-register via OTP).
      */
     public static createUser<ThrowOnError extends boolean = true>(options: Options<usersCreateUserData, ThrowOnError>) {
         return (options.client ?? client).post<usersCreateUserResponses, usersCreateUserErrors, ThrowOnError>({

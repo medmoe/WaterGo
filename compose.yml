@@ -69,8 +69,7 @@ services:
     environment:
       PROJECT_NAME: ${PROJECT_NAME:?Variable not set}
       SECRET_KEY: ${SECRET_KEY:?Variable not set}
-      FIRST_SUPERUSER: ${FIRST_SUPERUSER:?Variable not set}
-      FIRST_SUPERUSER_PASSWORD: ${FIRST_SUPERUSER_PASSWORD:?Variable not set}
+      FIRST_SUPERUSER_PHONE: ${FIRST_SUPERUSER_PHONE:?Variable not set}
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?Variable not set}@db:5432/app
       REDIS_URL: redis://redis:6379/0
       POSTGIS_ENABLED: ${POSTGIS_ENABLED:-true}
@@ -112,8 +111,7 @@ services:
     environment:
       PROJECT_NAME: ${PROJECT_NAME:?Variable not set}
       SECRET_KEY: ${SECRET_KEY:?Variable not set}
-      FIRST_SUPERUSER: ${FIRST_SUPERUSER:?Variable not set}
-      FIRST_SUPERUSER_PASSWORD: ${FIRST_SUPERUSER_PASSWORD:?Variable not set}
+      FIRST_SUPERUSER_PHONE: ${FIRST_SUPERUSER_PHONE:?Variable not set}
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?Variable not set}@db:5432/app
       REDIS_URL: redis://redis:6379/0
       POSTGIS_ENABLED: ${POSTGIS_ENABLED:-true}

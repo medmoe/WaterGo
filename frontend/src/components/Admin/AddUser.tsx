@@ -5,7 +5,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { type UserCreate, UsersService } from "@/client"
+import { type UserCreate, type UserRole, UsersService } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -28,13 +28,25 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/ui/loading-button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import useCustomToast from "@/hooks/useCustomToast"
 import { handleError } from "@/utils"
 
+const ROLES: UserRole[] = ["customer", "dispatcher", "driver", "admin"]
+
 const formSchema = z.object({
-  email: z.email({ message: "Invalid email address" }),
+  phone_number: z
+    .string()
+    .min(1, { message: "Phone number is required" })
+    .regex(/^\+?[0-9]{6,20}$/, { message: "Use E.164 format, e.g. +2135XXXXXXXX" }),
   full_name: z.string().optional(),
-  is_superuser: z.boolean(),
+  role: z.enum(["customer", "dispatcher", "driver", "admin"]),
   is_active: z.boolean(),
 })
 
@@ -50,9 +62,9 @@ const AddUser = () => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      email: "",
+      phone_number: "",
       full_name: "",
-      is_superuser: false,
+      role: "dispatcher",
       is_active: true,
     },
   })
@@ -86,7 +98,7 @@ const AddUser = () => {
         <DialogHeader>
           <DialogTitle>Add User</DialogTitle>
           <DialogDescription>
-            Fill in the form below to add a new user to the system.
+            Create a dispatcher, driver or admin account.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -94,19 +106,14 @@ const AddUser = () => {
             <div className="grid gap-4 py-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="phone_number"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Email <span className="text-destructive">*</span>
+                      Phone number <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Email"
-                        type="email"
-                        {...field}
-                        required
-                      />
+                      <Input placeholder="+2135XXXXXXXX" type="tel" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -129,16 +136,28 @@ const AddUser = () => {
 
               <FormField
                 control={form.control}
-                name="is_superuser"
+                name="role"
                 render={({ field }) => (
-                  <FormItem className="flex items-center gap-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal">Is superuser?</FormLabel>
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {ROLES.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

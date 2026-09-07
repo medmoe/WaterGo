@@ -29,21 +29,18 @@ export type Message = {
  */
 export type UserCreate = {
     /**
-     * Email
+     * Phone Number
      */
-    email: string;
-    /**
-     * Is Active
-     */
-    is_active?: boolean;
-    /**
-     * Is Superuser
-     */
-    is_superuser?: boolean;
+    phone_number: string;
     /**
      * Full Name
      */
     full_name?: string | null;
+    role?: UserRole;
+    /**
+     * Is Active
+     */
+    is_active?: boolean;
 };
 
 /**
@@ -51,21 +48,18 @@ export type UserCreate = {
  */
 export type UserPublic = {
     /**
-     * Email
+     * Phone Number
      */
-    email: string;
-    /**
-     * Is Active
-     */
-    is_active?: boolean;
-    /**
-     * Is Superuser
-     */
-    is_superuser?: boolean;
+    phone_number: string;
     /**
      * Full Name
      */
     full_name?: string | null;
+    role?: UserRole;
+    /**
+     * Is Active
+     */
+    is_active?: boolean;
     /**
      * Id
      */
@@ -73,29 +67,35 @@ export type UserPublic = {
     /**
      * Created At
      */
-    created_at?: string | null;
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
 };
+
+/**
+ * UserRole
+ */
+export type UserRole = 'customer' | 'dispatcher' | 'driver' | 'admin';
 
 /**
  * UserUpdate
  */
 export type UserUpdate = {
     /**
-     * Email
+     * Phone Number
      */
-    email?: string | null;
-    /**
-     * Is Active
-     */
-    is_active?: boolean | null;
-    /**
-     * Is Superuser
-     */
-    is_superuser?: boolean | null;
+    phone_number?: string | null;
     /**
      * Full Name
      */
     full_name?: string | null;
+    role?: UserRole | null;
+    /**
+     * Is Active
+     */
+    is_active?: boolean | null;
 };
 
 /**
@@ -106,10 +106,6 @@ export type UserUpdateMe = {
      * Full Name
      */
     full_name?: string | null;
-    /**
-     * Email
-     */
-    email?: string | null;
 };
 
 /**

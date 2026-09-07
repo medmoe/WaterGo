@@ -32,18 +32,22 @@ export const columns: ColumnDef<UserTableData>[] = [
     },
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "phone_number",
+    header: "Phone",
     cell: ({ row }) => (
-      <span className="text-muted-foreground">{row.original.email}</span>
+      <span className="text-muted-foreground">
+        {row.original.phone_number}
+      </span>
     ),
   },
   {
-    accessorKey: "is_superuser",
+    accessorKey: "role",
     header: "Role",
     cell: ({ row }) => (
-      <Badge variant={row.original.is_superuser ? "default" : "secondary"}>
-        {row.original.is_superuser ? "Superuser" : "User"}
+      <Badge
+        variant={row.original.role === "admin" ? "default" : "secondary"}
+      >
+        {row.original.role ?? "customer"}
       </Badge>
     ),
   },

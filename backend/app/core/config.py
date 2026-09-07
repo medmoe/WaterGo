@@ -2,7 +2,6 @@ import warnings
 from typing import Literal, Self
 
 from pydantic import (
-    EmailStr,
     HttpUrl,
     PostgresDsn,
     field_validator,
@@ -53,9 +52,10 @@ class Settings(BaseSettings):
     # Route clustering (section 12) - not wired up yet.
     ROUTE_CLUSTER_DISTANCE_METERS: int = 1500
 
-    EMAIL_TEST_USER: EmailStr = "test@example.com"
-    FIRST_SUPERUSER: EmailStr
-    FIRST_SUPERUSER_PASSWORD: str
+    # Phone number (E.164) of the bootstrap admin account, seeded by init_db.
+    FIRST_SUPERUSER_PHONE: str = "+213555000000"
+    # Phone number used by the test suite for the "normal user" fixture.
+    TEST_USER_PHONE: str = "+213555000001"
 
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
@@ -73,9 +73,6 @@ class Settings(BaseSettings):
         self._check_default_secret("SECRET_KEY", self.SECRET_KEY)
         for host in self.DATABASE_URL.hosts():
             self._check_default_secret("DATABASE_URL password", host["password"])
-        self._check_default_secret(
-            "FIRST_SUPERUSER_PASSWORD", self.FIRST_SUPERUSER_PASSWORD
-        )
 
         return self
 
