@@ -15,6 +15,54 @@ export type HTTPValidationError = {
 };
 
 /**
+ * LocationCreate
+ */
+export type LocationCreate = {
+    /**
+     * Raw Lat
+     */
+    raw_lat: number;
+    /**
+     * Raw Lng
+     */
+    raw_lng: number;
+    /**
+     * Landmark Text
+     */
+    landmark_text: string;
+    /**
+     * Commune
+     */
+    commune: string;
+};
+
+/**
+ * LocationPublic
+ */
+export type LocationPublic = {
+    /**
+     * Landmark Text
+     */
+    landmark_text: string;
+    /**
+     * Commune
+     */
+    commune: string;
+    /**
+     * Raw Lat
+     */
+    raw_lat: number;
+    /**
+     * Raw Lng
+     */
+    raw_lng: number;
+    /**
+     * Id
+     */
+    id: string;
+};
+
+/**
  * Message
  */
 export type Message = {
@@ -46,6 +94,172 @@ export type OTPVerify = {
      * Code
      */
     code: string;
+};
+
+/**
+ * OrderCancel
+ */
+export type OrderCancel = {
+    /**
+     * Cancelled Reason
+     */
+    cancelled_reason?: string | null;
+};
+
+/**
+ * OrderCreate
+ */
+export type OrderCreate = {
+    location: LocationCreate;
+    /**
+     * Quantity Liters
+     */
+    quantity_liters: number;
+    /**
+     * Customer Phone
+     */
+    customer_phone?: string | null;
+    /**
+     * Requested Window Start
+     */
+    requested_window_start?: string | null;
+    /**
+     * Requested Window End
+     */
+    requested_window_end?: string | null;
+};
+
+/**
+ * OrderPublic
+ */
+export type OrderPublic = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Customer Id
+     */
+    customer_id: string | null;
+    /**
+     * Customer Phone
+     */
+    customer_phone: string;
+    /**
+     * Location Id
+     */
+    location_id: string;
+    /**
+     * Quantity Liters
+     */
+    quantity_liters: number;
+    /**
+     * Price Per Liter Dzd
+     */
+    price_per_liter_dzd: string;
+    /**
+     * Total Price Dzd
+     */
+    total_price_dzd: string;
+    status: OrderStatus;
+    /**
+     * Requested Window Start
+     */
+    requested_window_start: string | null;
+    /**
+     * Requested Window End
+     */
+    requested_window_end: string | null;
+    /**
+     * Confirmed By
+     */
+    confirmed_by: string | null;
+    /**
+     * Confirmed At
+     */
+    confirmed_at: string | null;
+    /**
+     * Cancelled Reason
+     */
+    cancelled_reason: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    location?: LocationPublic | null;
+};
+
+/**
+ * OrderStatus
+ */
+export type OrderStatus = 'pending' | 'confirmed' | 'assigned' | 'en_route' | 'delivered' | 'cancelled';
+
+/**
+ * OrdersPublic
+ */
+export type OrdersPublic = {
+    /**
+     * Data
+     */
+    data: Array<OrderPublic>;
+    /**
+     * Count
+     */
+    count: number;
+};
+
+/**
+ * PricingCurrent
+ */
+export type PricingCurrent = {
+    /**
+     * Price Per Liter Dzd
+     */
+    price_per_liter_dzd: string;
+    /**
+     * Effective From
+     */
+    effective_from?: string | null;
+    /**
+     * Is Default
+     */
+    is_default?: boolean;
+};
+
+/**
+ * PricingSettingCreate
+ */
+export type PricingSettingCreate = {
+    /**
+     * Price Per Liter Dzd
+     */
+    price_per_liter_dzd: number | string;
+    /**
+     * Effective From
+     */
+    effective_from?: string | null;
+};
+
+/**
+ * PricingSettingPublic
+ */
+export type PricingSettingPublic = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Price Per Liter Dzd
+     */
+    price_per_liter_dzd: string;
+    /**
+     * Effective From
+     */
+    effective_from: string;
 };
 
 /**
@@ -443,6 +657,201 @@ export type usersUpdateUserResponses = {
 };
 
 export type usersUpdateUserResponse = usersUpdateUserResponses[keyof usersUpdateUserResponses];
+
+export type ordersListOrdersData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Status
+         */
+        status?: OrderStatus | null;
+        /**
+         * Mine
+         */
+        mine?: boolean;
+    };
+    url: '/api/v1/orders';
+};
+
+export type ordersListOrdersErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type ordersListOrdersError = ordersListOrdersErrors[keyof ordersListOrdersErrors];
+
+export type ordersListOrdersResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrdersPublic;
+};
+
+export type ordersListOrdersResponse = ordersListOrdersResponses[keyof ordersListOrdersResponses];
+
+export type ordersCreateOrderData = {
+    body: OrderCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/orders';
+};
+
+export type ordersCreateOrderErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type ordersCreateOrderError = ordersCreateOrderErrors[keyof ordersCreateOrderErrors];
+
+export type ordersCreateOrderResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrderPublic;
+};
+
+export type ordersCreateOrderResponse = ordersCreateOrderResponses[keyof ordersCreateOrderResponses];
+
+export type ordersReadOrderData = {
+    body?: never;
+    path: {
+        /**
+         * Order Id
+         */
+        order_id: string;
+    };
+    query?: {
+        /**
+         * Phone
+         */
+        phone?: string | null;
+    };
+    url: '/api/v1/orders/{order_id}';
+};
+
+export type ordersReadOrderErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type ordersReadOrderError = ordersReadOrderErrors[keyof ordersReadOrderErrors];
+
+export type ordersReadOrderResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrderPublic;
+};
+
+export type ordersReadOrderResponse = ordersReadOrderResponses[keyof ordersReadOrderResponses];
+
+export type ordersConfirmOrderData = {
+    body?: never;
+    path: {
+        /**
+         * Order Id
+         */
+        order_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orders/{order_id}/confirm';
+};
+
+export type ordersConfirmOrderErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type ordersConfirmOrderError = ordersConfirmOrderErrors[keyof ordersConfirmOrderErrors];
+
+export type ordersConfirmOrderResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrderPublic;
+};
+
+export type ordersConfirmOrderResponse = ordersConfirmOrderResponses[keyof ordersConfirmOrderResponses];
+
+export type ordersCancelOrderData = {
+    body: OrderCancel;
+    path: {
+        /**
+         * Order Id
+         */
+        order_id: string;
+    };
+    query?: never;
+    url: '/api/v1/orders/{order_id}/cancel';
+};
+
+export type ordersCancelOrderErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type ordersCancelOrderError = ordersCancelOrderErrors[keyof ordersCancelOrderErrors];
+
+export type ordersCancelOrderResponses = {
+    /**
+     * Successful Response
+     */
+    200: OrderPublic;
+};
+
+export type ordersCancelOrderResponse = ordersCancelOrderResponses[keyof ordersCancelOrderResponses];
+
+export type pricingReadCurrentPricingData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/pricing/current';
+};
+
+export type pricingReadCurrentPricingResponses = {
+    /**
+     * Successful Response
+     */
+    200: PricingCurrent;
+};
+
+export type pricingReadCurrentPricingResponse = pricingReadCurrentPricingResponses[keyof pricingReadCurrentPricingResponses];
+
+export type pricingCreatePricingData = {
+    body: PricingSettingCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/pricing';
+};
+
+export type pricingCreatePricingErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type pricingCreatePricingError = pricingCreatePricingErrors[keyof pricingCreatePricingErrors];
+
+export type pricingCreatePricingResponses = {
+    /**
+     * Successful Response
+     */
+    200: PricingSettingPublic;
+};
+
+export type pricingCreatePricingResponse = pricingCreatePricingResponses[keyof pricingCreatePricingResponses];
 
 export type utilsHealthCheckData = {
     body?: never;

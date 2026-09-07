@@ -176,6 +176,17 @@ class Location(LocationBase, TimestampMixin, table=True):
     orders: list["Order"] = Relationship(back_populates="location")
 
 
+class LocationCreate(SQLModel):
+    raw_lat: float = Field(ge=-90, le=90)
+    raw_lng: float = Field(ge=-180, le=180)
+    landmark_text: str = Field(max_length=500)
+    commune: str = Field(max_length=255)
+
+
+class LocationPublic(LocationBase):
+    id: uuid.UUID
+
+
 # ---------------------------------------------------------------------------
 # vehicles
 # ---------------------------------------------------------------------------
@@ -274,10 +285,21 @@ class PricingSetting(PricingSettingBase, TimestampMixin, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
 
+class PricingSettingCreate(SQLModel):
+    price_per_liter_dzd: Decimal = Field(gt=0)
+    effective_from: datetime | None = None
+
+
 class PricingSettingPublic(SQLModel):
     id: uuid.UUID
     price_per_liter_dzd: Decimal
     effective_from: datetime
+
+
+class PricingCurrent(SQLModel):
+    price_per_liter_dzd: Decimal
+    effective_from: datetime | None = None
+    is_default: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -333,6 +355,46 @@ class Order(TimestampMixin, table=True):
     review: Optional["Review"] = Relationship(
         back_populates="order", cascade_delete=True
     )
+
+
+# A single order can't exceed what one tanker carries (section 7).
+MAX_ORDER_LITERS = 4000
+
+
+class OrderCreate(SQLModel):
+    location: LocationCreate
+    quantity_liters: int = Field(ge=1, le=MAX_ORDER_LITERS)
+    customer_phone: str | None = Field(default=None, max_length=20)
+    requested_window_start: datetime | None = None
+    requested_window_end: datetime | None = None
+
+
+class OrderCancel(SQLModel):
+    cancelled_reason: str | None = Field(default=None, max_length=500)
+
+
+class OrderPublic(SQLModel):
+    id: uuid.UUID
+    customer_id: uuid.UUID | None
+    customer_phone: str
+    location_id: uuid.UUID
+    quantity_liters: int
+    price_per_liter_dzd: Decimal
+    total_price_dzd: Decimal
+    status: OrderStatus
+    requested_window_start: datetime | None
+    requested_window_end: datetime | None
+    confirmed_by: uuid.UUID | None
+    confirmed_at: datetime | None
+    cancelled_reason: str | None
+    created_at: datetime
+    updated_at: datetime
+    location: LocationPublic | None = None
+
+
+class OrdersPublic(SQLModel):
+    data: list[OrderPublic]
+    count: int
 
 
 # ---------------------------------------------------------------------------

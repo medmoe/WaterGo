@@ -39,10 +39,7 @@ const phoneSchema = z.object({
 })
 
 const codeSchema = z.object({
-  code: z
-    .string()
-    .min(4, { message: "Enter the code you received" })
-    .max(8),
+  code: z.string().min(4, { message: "Enter the code you received" }).max(8),
 })
 
 function Login() {

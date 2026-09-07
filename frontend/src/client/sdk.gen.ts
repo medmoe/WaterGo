@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
+import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -176,6 +176,124 @@ export class UsersService {
             responseType: 'json',
             security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/users/{user_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+}
+
+export class OrdersService {
+    /**
+     * List Orders
+     *
+     * List orders. Customers only ever see their own; dispatchers/admins see all
+     * unless ``mine=true``.
+     */
+    public static listOrders<ThrowOnError extends boolean = true>(options?: Options<ordersListOrdersData, ThrowOnError>) {
+        return (options?.client ?? client).get<ordersListOrdersResponses, ordersListOrdersErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/orders',
+            ...options
+        });
+    }
+    
+    /**
+     * Create Order
+     *
+     * Place an order. Works for a logged-in customer or, if guest checkout is
+     * allowed, an anonymous caller who supplies ``customer_phone``.
+     */
+    public static createOrder<ThrowOnError extends boolean = true>(options: Options<ordersCreateOrderData, ThrowOnError>) {
+        return (options.client ?? client).post<ordersCreateOrderResponses, ordersCreateOrderErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/orders',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Read Order
+     *
+     * Order detail. A logged-in customer may read their own orders; dispatch may
+     * read any; a guest may read an order by passing the matching ``phone``.
+     */
+    public static readOrder<ThrowOnError extends boolean = true>(options: Options<ordersReadOrderData, ThrowOnError>) {
+        return (options.client ?? client).get<ordersReadOrderResponses, ordersReadOrderErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/orders/{order_id}',
+            ...options
+        });
+    }
+    
+    /**
+     * Confirm Order
+     *
+     * Dispatcher confirms an order after the phone call (status -> confirmed).
+     */
+    public static confirmOrder<ThrowOnError extends boolean = true>(options: Options<ordersConfirmOrderData, ThrowOnError>) {
+        return (options.client ?? client).patch<ordersConfirmOrderResponses, ordersConfirmOrderErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/orders/{order_id}/confirm',
+            ...options
+        });
+    }
+    
+    /**
+     * Cancel Order
+     *
+     * Cancel an order. Allowed from pending/confirmed only (section 6).
+     */
+    public static cancelOrder<ThrowOnError extends boolean = true>(options: Options<ordersCancelOrderData, ThrowOnError>) {
+        return (options.client ?? client).patch<ordersCancelOrderResponses, ordersCancelOrderErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/orders/{order_id}/cancel',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+}
+
+export class PricingService {
+    /**
+     * Read Current Pricing
+     *
+     * Active per-liter price. Falls back to the section 7 default when no pricing
+     * row has been configured yet.
+     */
+    public static readCurrentPricing<ThrowOnError extends boolean = true>(options?: Options<pricingReadCurrentPricingData, ThrowOnError>) {
+        return (options?.client ?? client).get<pricingReadCurrentPricingResponses, unknown, ThrowOnError>({
+            responseType: 'json',
+            url: '/api/v1/pricing/current',
+            ...options
+        });
+    }
+    
+    /**
+     * Create Pricing
+     *
+     * Insert a new pricing row (admin only). Never updates an existing row so
+     * historical orders stay traceable to the price that applied.
+     */
+    public static createPricing<ThrowOnError extends boolean = true>(options: Options<pricingCreatePricingData, ThrowOnError>) {
+        return (options.client ?? client).post<pricingCreatePricingResponses, pricingCreatePricingErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/pricing',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
