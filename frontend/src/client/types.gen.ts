@@ -63,6 +63,57 @@ export type LocationPublic = {
 };
 
 /**
+ * MaintenanceLogCreate
+ */
+export type MaintenanceLogCreate = {
+    type: MaintenanceType;
+    /**
+     * Odometer Km At Event
+     */
+    odometer_km_at_event: number;
+    /**
+     * Notes
+     */
+    notes?: string | null;
+};
+
+/**
+ * MaintenanceLogPublic
+ */
+export type MaintenanceLogPublic = {
+    type: MaintenanceType;
+    /**
+     * Odometer Km At Event
+     */
+    odometer_km_at_event: number;
+    /**
+     * Notes
+     */
+    notes?: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Vehicle Id
+     */
+    vehicle_id: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * MaintenanceType
+ */
+export type MaintenanceType = 'tire' | 'oil' | 'service' | 'other';
+
+/**
  * Message
  */
 export type Message = {
@@ -213,6 +264,40 @@ export type OrdersPublic = {
 };
 
 /**
+ * PendingMapPoint
+ */
+export type PendingMapPoint = {
+    /**
+     * Order Id
+     */
+    order_id: string;
+    /**
+     * Raw Lat
+     */
+    raw_lat: number;
+    /**
+     * Raw Lng
+     */
+    raw_lng: number;
+    /**
+     * Customer Phone
+     */
+    customer_phone: string;
+    /**
+     * Quantity Liters
+     */
+    quantity_liters: number;
+    /**
+     * Landmark Text
+     */
+    landmark_text: string;
+    /**
+     * Commune
+     */
+    commune: string;
+};
+
+/**
  * PricingCurrent
  */
 export type PricingCurrent = {
@@ -260,6 +345,128 @@ export type PricingSettingPublic = {
      * Effective From
      */
     effective_from: string;
+};
+
+/**
+ * RouteCreate
+ */
+export type RouteCreate = {
+    /**
+     * Vehicle Id
+     */
+    vehicle_id: string;
+    /**
+     * Driver Id
+     */
+    driver_id: string;
+    /**
+     * Planned Date
+     */
+    planned_date: string;
+    /**
+     * Order Ids
+     */
+    order_ids: Array<string>;
+};
+
+/**
+ * RoutePublic
+ */
+export type RoutePublic = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Vehicle Id
+     */
+    vehicle_id: string;
+    /**
+     * Driver Id
+     */
+    driver_id: string;
+    /**
+     * Planned Date
+     */
+    planned_date: string;
+    status: RouteStatus;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Stops
+     */
+    stops?: Array<RouteStopPublic>;
+};
+
+/**
+ * RouteStatus
+ */
+export type RouteStatus = 'planned' | 'in_progress' | 'completed';
+
+/**
+ * RouteStopPublic
+ */
+export type RouteStopPublic = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Route Id
+     */
+    route_id: string;
+    /**
+     * Order Id
+     */
+    order_id: string;
+    /**
+     * Sequence Number
+     */
+    sequence_number: number;
+    /**
+     * Delivered At
+     */
+    delivered_at: string | null;
+    /**
+     * Payment Collected
+     */
+    payment_collected: boolean;
+    /**
+     * Payment Collected At
+     */
+    payment_collected_at: string | null;
+    order?: OrderPublic | null;
+};
+
+/**
+ * RouteUpdate
+ */
+export type RouteUpdate = {
+    status?: RouteStatus | null;
+    /**
+     * Order Ids
+     */
+    order_ids?: Array<string> | null;
+};
+
+/**
+ * RoutesPublic
+ */
+export type RoutesPublic = {
+    /**
+     * Data
+     */
+    data: Array<RoutePublic>;
+    /**
+     * Count
+     */
+    count: number;
 };
 
 /**
@@ -400,6 +607,94 @@ export type ValidationError = {
     ctx?: {
         [key: string]: unknown;
     };
+};
+
+/**
+ * VehicleCreate
+ */
+export type VehicleCreate = {
+    /**
+     * Plate Number
+     */
+    plate_number: string;
+    /**
+     * Capacity Liters
+     */
+    capacity_liters: number;
+    status?: VehicleStatus;
+    /**
+     * Current Odometer Km
+     */
+    current_odometer_km?: number;
+};
+
+/**
+ * VehiclePublic
+ */
+export type VehiclePublic = {
+    /**
+     * Plate Number
+     */
+    plate_number: string;
+    /**
+     * Capacity Liters
+     */
+    capacity_liters: number;
+    status?: VehicleStatus;
+    /**
+     * Current Odometer Km
+     */
+    current_odometer_km?: number;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+};
+
+/**
+ * VehicleStatus
+ */
+export type VehicleStatus = 'available' | 'on_route' | 'maintenance';
+
+/**
+ * VehicleUpdate
+ */
+export type VehicleUpdate = {
+    /**
+     * Plate Number
+     */
+    plate_number?: string | null;
+    /**
+     * Capacity Liters
+     */
+    capacity_liters?: number | null;
+    status?: VehicleStatus | null;
+    /**
+     * Current Odometer Km
+     */
+    current_odometer_km?: number | null;
+};
+
+/**
+ * VehiclesPublic
+ */
+export type VehiclesPublic = {
+    /**
+     * Data
+     */
+    data: Array<VehiclePublic>;
+    /**
+     * Count
+     */
+    count: number;
 };
 
 export type authRequestOtpData = {
@@ -811,6 +1106,306 @@ export type ordersCancelOrderResponses = {
 };
 
 export type ordersCancelOrderResponse = ordersCancelOrderResponses[keyof ordersCancelOrderResponses];
+
+export type dispatchPendingMapData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/dispatch/pending-map';
+};
+
+export type dispatchPendingMapResponses = {
+    /**
+     * Response Dispatch-Pending Map
+     *
+     * Successful Response
+     */
+    200: Array<PendingMapPoint>;
+};
+
+export type dispatchPendingMapResponse = dispatchPendingMapResponses[keyof dispatchPendingMapResponses];
+
+export type dispatchListRoutesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Planned Date
+         */
+        planned_date?: string | null;
+    };
+    url: '/api/v1/dispatch/routes';
+};
+
+export type dispatchListRoutesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type dispatchListRoutesError = dispatchListRoutesErrors[keyof dispatchListRoutesErrors];
+
+export type dispatchListRoutesResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoutesPublic;
+};
+
+export type dispatchListRoutesResponse = dispatchListRoutesResponses[keyof dispatchListRoutesResponses];
+
+export type dispatchCreateRouteData = {
+    body: RouteCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/dispatch/routes';
+};
+
+export type dispatchCreateRouteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type dispatchCreateRouteError = dispatchCreateRouteErrors[keyof dispatchCreateRouteErrors];
+
+export type dispatchCreateRouteResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoutePublic;
+};
+
+export type dispatchCreateRouteResponse = dispatchCreateRouteResponses[keyof dispatchCreateRouteResponses];
+
+export type dispatchUpdateRouteData = {
+    body: RouteUpdate;
+    path: {
+        /**
+         * Route Id
+         */
+        route_id: string;
+    };
+    query?: never;
+    url: '/api/v1/dispatch/routes/{route_id}';
+};
+
+export type dispatchUpdateRouteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type dispatchUpdateRouteError = dispatchUpdateRouteErrors[keyof dispatchUpdateRouteErrors];
+
+export type dispatchUpdateRouteResponses = {
+    /**
+     * Successful Response
+     */
+    200: RoutePublic;
+};
+
+export type dispatchUpdateRouteResponse = dispatchUpdateRouteResponses[keyof dispatchUpdateRouteResponses];
+
+export type driverTodaysRouteData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/driver/routes/today';
+};
+
+export type driverTodaysRouteResponses = {
+    /**
+     * Response Driver-Todays Route
+     *
+     * Successful Response
+     */
+    200: RoutePublic | null;
+};
+
+export type driverTodaysRouteResponse = driverTodaysRouteResponses[keyof driverTodaysRouteResponses];
+
+export type driverMarkDeliveredData = {
+    body?: never;
+    path: {
+        /**
+         * Stop Id
+         */
+        stop_id: string;
+    };
+    query?: never;
+    url: '/api/v1/driver/stops/{stop_id}/delivered';
+};
+
+export type driverMarkDeliveredErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type driverMarkDeliveredError = driverMarkDeliveredErrors[keyof driverMarkDeliveredErrors];
+
+export type driverMarkDeliveredResponses = {
+    /**
+     * Successful Response
+     */
+    200: RouteStopPublic;
+};
+
+export type driverMarkDeliveredResponse = driverMarkDeliveredResponses[keyof driverMarkDeliveredResponses];
+
+export type driverMarkPaymentCollectedData = {
+    body?: never;
+    path: {
+        /**
+         * Stop Id
+         */
+        stop_id: string;
+    };
+    query?: never;
+    url: '/api/v1/driver/stops/{stop_id}/payment-collected';
+};
+
+export type driverMarkPaymentCollectedErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type driverMarkPaymentCollectedError = driverMarkPaymentCollectedErrors[keyof driverMarkPaymentCollectedErrors];
+
+export type driverMarkPaymentCollectedResponses = {
+    /**
+     * Successful Response
+     */
+    200: RouteStopPublic;
+};
+
+export type driverMarkPaymentCollectedResponse = driverMarkPaymentCollectedResponses[keyof driverMarkPaymentCollectedResponses];
+
+export type fleetListVehiclesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Skip
+         */
+        skip?: number;
+        /**
+         * Limit
+         */
+        limit?: number;
+    };
+    url: '/api/v1/vehicles';
+};
+
+export type fleetListVehiclesErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type fleetListVehiclesError = fleetListVehiclesErrors[keyof fleetListVehiclesErrors];
+
+export type fleetListVehiclesResponses = {
+    /**
+     * Successful Response
+     */
+    200: VehiclesPublic;
+};
+
+export type fleetListVehiclesResponse = fleetListVehiclesResponses[keyof fleetListVehiclesResponses];
+
+export type fleetCreateVehicleData = {
+    body: VehicleCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/vehicles';
+};
+
+export type fleetCreateVehicleErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type fleetCreateVehicleError = fleetCreateVehicleErrors[keyof fleetCreateVehicleErrors];
+
+export type fleetCreateVehicleResponses = {
+    /**
+     * Successful Response
+     */
+    200: VehiclePublic;
+};
+
+export type fleetCreateVehicleResponse = fleetCreateVehicleResponses[keyof fleetCreateVehicleResponses];
+
+export type fleetUpdateVehicleData = {
+    body: VehicleUpdate;
+    path: {
+        /**
+         * Vehicle Id
+         */
+        vehicle_id: string;
+    };
+    query?: never;
+    url: '/api/v1/vehicles/{vehicle_id}';
+};
+
+export type fleetUpdateVehicleErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type fleetUpdateVehicleError = fleetUpdateVehicleErrors[keyof fleetUpdateVehicleErrors];
+
+export type fleetUpdateVehicleResponses = {
+    /**
+     * Successful Response
+     */
+    200: VehiclePublic;
+};
+
+export type fleetUpdateVehicleResponse = fleetUpdateVehicleResponses[keyof fleetUpdateVehicleResponses];
+
+export type fleetAddMaintenanceLogData = {
+    body: MaintenanceLogCreate;
+    path: {
+        /**
+         * Vehicle Id
+         */
+        vehicle_id: string;
+    };
+    query?: never;
+    url: '/api/v1/vehicles/{vehicle_id}/maintenance-logs';
+};
+
+export type fleetAddMaintenanceLogErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type fleetAddMaintenanceLogError = fleetAddMaintenanceLogErrors[keyof fleetAddMaintenanceLogErrors];
+
+export type fleetAddMaintenanceLogResponses = {
+    /**
+     * Successful Response
+     */
+    200: MaintenanceLogPublic;
+};
+
+export type fleetAddMaintenanceLogResponse = fleetAddMaintenanceLogResponses[keyof fleetAddMaintenanceLogResponses];
 
 export type pricingReadCurrentPricingData = {
     body?: never;

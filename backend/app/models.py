@@ -448,6 +448,57 @@ class RouteStop(TimestampMixin, table=True):
     order: Order | None = Relationship(back_populates="route_stop")
 
 
+class RouteCreate(SQLModel):
+    vehicle_id: uuid.UUID
+    driver_id: uuid.UUID
+    planned_date: date
+    order_ids: list[uuid.UUID] = Field(min_length=1)
+
+
+class RouteUpdate(SQLModel):
+    status: RouteStatus | None = None
+    # A full re-ordering of the route's existing stops (a permutation of the
+    # current order ids). Not for adding/removing stops.
+    order_ids: list[uuid.UUID] | None = None
+
+
+class RouteStopPublic(SQLModel):
+    id: uuid.UUID
+    route_id: uuid.UUID
+    order_id: uuid.UUID
+    sequence_number: int
+    delivered_at: datetime | None
+    payment_collected: bool
+    payment_collected_at: datetime | None
+    order: OrderPublic | None = None
+
+
+class RoutePublic(SQLModel):
+    id: uuid.UUID
+    vehicle_id: uuid.UUID
+    driver_id: uuid.UUID
+    planned_date: date
+    status: RouteStatus
+    created_at: datetime
+    updated_at: datetime
+    stops: list[RouteStopPublic] = []
+
+
+class RoutesPublic(SQLModel):
+    data: list[RoutePublic]
+    count: int
+
+
+class PendingMapPoint(SQLModel):
+    order_id: uuid.UUID
+    raw_lat: float
+    raw_lng: float
+    customer_phone: str
+    quantity_liters: int
+    landmark_text: str
+    commune: str
+
+
 # ---------------------------------------------------------------------------
 # reviews
 # ---------------------------------------------------------------------------

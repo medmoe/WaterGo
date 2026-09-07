@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
+import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -259,6 +259,172 @@ export class OrdersService {
             responseType: 'json',
             security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/orders/{order_id}/cancel',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+}
+
+export class DispatchService {
+    /**
+     * Pending Map
+     *
+     * Geo points for every confirmed order not yet on a route.
+     */
+    public static pendingMap<ThrowOnError extends boolean = true>(options?: Options<dispatchPendingMapData, ThrowOnError>) {
+        return (options?.client ?? client).get<dispatchPendingMapResponses, unknown, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/dispatch/pending-map',
+            ...options
+        });
+    }
+    
+    /**
+     * List Routes
+     */
+    public static listRoutes<ThrowOnError extends boolean = true>(options?: Options<dispatchListRoutesData, ThrowOnError>) {
+        return (options?.client ?? client).get<dispatchListRoutesResponses, dispatchListRoutesErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/dispatch/routes',
+            ...options
+        });
+    }
+    
+    /**
+     * Create Route
+     *
+     * Group confirmed orders onto one truck/driver route.
+     */
+    public static createRoute<ThrowOnError extends boolean = true>(options: Options<dispatchCreateRouteData, ThrowOnError>) {
+        return (options.client ?? client).post<dispatchCreateRouteResponses, dispatchCreateRouteErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/dispatch/routes',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Update Route
+     *
+     * Reorder stops and/or advance route status (planned/in_progress/completed).
+     */
+    public static updateRoute<ThrowOnError extends boolean = true>(options: Options<dispatchUpdateRouteData, ThrowOnError>) {
+        return (options.client ?? client).patch<dispatchUpdateRouteResponses, dispatchUpdateRouteErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/dispatch/routes/{route_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+}
+
+export class DriverService {
+    /**
+     * Todays Route
+     *
+     * The logged-in driver's route for today, stops in sequence order.
+     */
+    public static todaysRoute<ThrowOnError extends boolean = true>(options?: Options<driverTodaysRouteData, ThrowOnError>) {
+        return (options?.client ?? client).get<driverTodaysRouteResponses, unknown, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/driver/routes/today',
+            ...options
+        });
+    }
+    
+    /**
+     * Mark Delivered
+     */
+    public static markDelivered<ThrowOnError extends boolean = true>(options: Options<driverMarkDeliveredData, ThrowOnError>) {
+        return (options.client ?? client).patch<driverMarkDeliveredResponses, driverMarkDeliveredErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/driver/stops/{stop_id}/delivered',
+            ...options
+        });
+    }
+    
+    /**
+     * Mark Payment Collected
+     */
+    public static markPaymentCollected<ThrowOnError extends boolean = true>(options: Options<driverMarkPaymentCollectedData, ThrowOnError>) {
+        return (options.client ?? client).patch<driverMarkPaymentCollectedResponses, driverMarkPaymentCollectedErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/driver/stops/{stop_id}/payment-collected',
+            ...options
+        });
+    }
+}
+
+export class FleetService {
+    /**
+     * List Vehicles
+     */
+    public static listVehicles<ThrowOnError extends boolean = true>(options?: Options<fleetListVehiclesData, ThrowOnError>) {
+        return (options?.client ?? client).get<fleetListVehiclesResponses, fleetListVehiclesErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/vehicles',
+            ...options
+        });
+    }
+    
+    /**
+     * Create Vehicle
+     */
+    public static createVehicle<ThrowOnError extends boolean = true>(options: Options<fleetCreateVehicleData, ThrowOnError>) {
+        return (options.client ?? client).post<fleetCreateVehicleResponses, fleetCreateVehicleErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/vehicles',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Update Vehicle
+     */
+    public static updateVehicle<ThrowOnError extends boolean = true>(options: Options<fleetUpdateVehicleData, ThrowOnError>) {
+        return (options.client ?? client).patch<fleetUpdateVehicleResponses, fleetUpdateVehicleErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/vehicles/{vehicle_id}',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Add Maintenance Log
+     */
+    public static addMaintenanceLog<ThrowOnError extends boolean = true>(options: Options<fleetAddMaintenanceLogData, ThrowOnError>) {
+        return (options.client ?? client).post<fleetAddMaintenanceLogResponses, fleetAddMaintenanceLogErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/vehicles/{vehicle_id}/maintenance-logs',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
