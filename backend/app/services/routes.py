@@ -20,6 +20,7 @@ from app.models import (
     VehicleStatus,
 )
 from app.services import orders as orders_service
+from app.services.ws import manager as ws_manager
 
 
 def pending_map(session: Session) -> list[PendingMapPoint]:
@@ -101,6 +102,16 @@ def create_route(
 
     session.commit()
     session.refresh(route)
+
+    ws_manager.notify_driver(
+        driver_id,
+        {
+            "type": "route_assigned",
+            "route_id": str(route.id),
+            "planned_date": str(planned_date),
+            "stop_count": len(orders),
+        },
+    )
     return route
 
 
@@ -111,14 +122,25 @@ def update_route(
     status: RouteStatus | None = None,
     order_ids: list[UUID] | None = None,
 ) -> Route:
+    status_changed = False
     if order_ids is not None:
         _reorder_stops(session, route, order_ids)
     if status is not None and status != route.status:
         _change_route_status(session, route, status)
+        status_changed = True
 
     session.add(route)
     session.commit()
     session.refresh(route)
+
+    if status_changed:
+        ws_manager.notify_dispatch(
+            {
+                "type": "route_status",
+                "route_id": str(route.id),
+                "status": route.status.value,
+            }
+        )
     return route
 
 

@@ -19,6 +19,7 @@ from app.models import (
     UserRole,
 )
 from app.services import pricing
+from app.services.ws import manager as ws_manager
 
 # section 6:
 #   pending -> confirmed -> assigned -> en_route -> delivered
@@ -117,6 +118,12 @@ def transition_status(
     session.add(order)
     session.commit()
     session.refresh(order)
+
+    if new_status == OrderStatus.confirmed:
+        ws_manager.notify_dispatch(
+            {"type": "order_confirmed", "order_id": str(order.id)}
+        )
+
     return order
 
 

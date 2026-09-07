@@ -9,6 +9,7 @@ from app.api.routes import (
     users,
     utils,
     vehicles,
+    ws,
 )
 
 api_router = APIRouter()
@@ -19,4 +20,5 @@ api_router.include_router(dispatch.router)
 api_router.include_router(driver.router)
 api_router.include_router(vehicles.router)
 api_router.include_router(pricing.router)
+api_router.include_router(ws.router)
 api_router.include_router(utils.router)
