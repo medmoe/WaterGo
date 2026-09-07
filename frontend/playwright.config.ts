@@ -34,16 +34,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
-
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
       },
-      dependencies: ['setup'],
     },
+    // Authenticated dispatch/driver E2E needs an OTP test hook to read the
+    // code - see docs/follow-ups.md. Until then only the public flows are
+    // covered here.
 
     // {
     //   name: 'firefox',
