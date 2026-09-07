@@ -9,26 +9,39 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as DispatchRouteImport } from './routes/dispatch'
+import { Route as DriverRouteImport } from './routes/driver'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as ReviewOrderIdRouteImport } from './routes/review.$orderId'
+import { Route as TrackOrderIdRouteImport } from './routes/track.$orderId'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DispatchRoute = DispatchRouteImport.update({
+  id: '/dispatch',
+  path: '/dispatch',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverRoute = DriverRouteImport.update({
+  id: '/driver',
+  path: '/driver',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
-const LayoutIndexRoute = LayoutIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
@@ -45,58 +58,116 @@ const ReviewOrderIdRoute = ReviewOrderIdRouteImport.update({
   path: '/review/$orderId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrackOrderIdRoute = TrackOrderIdRouteImport.update({
+  id: '/track/$orderId',
+  path: '/track/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof LayoutIndexRoute
+  '/': typeof IndexRoute
+  '/dispatch': typeof DispatchRoute
+  '/driver': typeof DriverRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
   '/settings': typeof LayoutSettingsRoute
   '/review/$orderId': typeof ReviewOrderIdRoute
+  '/track/$orderId': typeof TrackOrderIdRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/dispatch': typeof DispatchRoute
+  '/driver': typeof DriverRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
   '/settings': typeof LayoutSettingsRoute
   '/review/$orderId': typeof ReviewOrderIdRoute
-  '/': typeof LayoutIndexRoute
+  '/track/$orderId': typeof TrackOrderIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_layout': typeof LayoutRouteWithChildren
+  '/dispatch': typeof DispatchRoute
+  '/driver': typeof DriverRoute
   '/login': typeof LoginRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/review/$orderId': typeof ReviewOrderIdRoute
-  '/_layout/': typeof LayoutIndexRoute
+  '/track/$orderId': typeof TrackOrderIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/admin' | '/settings' | '/review/$orderId'
+  fullPaths:
+    | '/'
+    | '/dispatch'
+    | '/driver'
+    | '/login'
+    | '/admin'
+    | '/settings'
+    | '/review/$orderId'
+    | '/track/$orderId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/admin' | '/settings' | '/review/$orderId' | '/'
+  to:
+    | '/'
+    | '/dispatch'
+    | '/driver'
+    | '/login'
+    | '/admin'
+    | '/settings'
+    | '/review/$orderId'
+    | '/track/$orderId'
   id:
     | '__root__'
+    | '/'
     | '/_layout'
+    | '/dispatch'
+    | '/driver'
     | '/login'
     | '/_layout/admin'
     | '/_layout/settings'
     | '/review/$orderId'
-    | '/_layout/'
+    | '/track/$orderId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   LayoutRoute: typeof LayoutRouteWithChildren
+  DispatchRoute: typeof DispatchRoute
+  DriverRoute: typeof DriverRoute
   LoginRoute: typeof LoginRoute
   ReviewOrderIdRoute: typeof ReviewOrderIdRoute
+  TrackOrderIdRoute: typeof TrackOrderIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_layout': {
       id: '/_layout'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof LayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dispatch': {
+      id: '/dispatch'
+      path: '/dispatch'
+      fullPath: '/dispatch'
+      preLoaderRoute: typeof DispatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver': {
+      id: '/driver'
+      path: '/driver'
+      fullPath: '/driver'
+      preLoaderRoute: typeof DriverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -105,13 +176,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_layout/': {
-      id: '/_layout/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof LayoutIndexRouteImport
-      parentRoute: typeof LayoutRoute
     }
     '/_layout/admin': {
       id: '/_layout/admin'
@@ -134,28 +198,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReviewOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/track/$orderId': {
+      id: '/track/$orderId'
+      path: '/track/$orderId'
+      fullPath: '/track/$orderId'
+      preLoaderRoute: typeof TrackOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
-  LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
-  LayoutIndexRoute: LayoutIndexRoute,
 }
 
 const LayoutRouteWithChildren =
   LayoutRoute._addFileChildren(LayoutRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   LayoutRoute: LayoutRouteWithChildren,
+  DispatchRoute: DispatchRoute,
+  DriverRoute: DriverRoute,
   LoginRoute: LoginRoute,
   ReviewOrderIdRoute: ReviewOrderIdRoute,
+  TrackOrderIdRoute: TrackOrderIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -34,9 +34,17 @@ const useAuth = () => {
     mutationFn: async (body: OTPVerify) => {
       const res = await AuthService.verifyOtp({ body })
       localStorage.setItem("access_token", res.data.access_token)
+      const me = (await UsersService.readUserMe()).data
+      return me
     },
-    onSuccess: () => {
-      navigate({ to: "/" })
+    onSuccess: (me) => {
+      const dest =
+        me.role === "dispatcher" || me.role === "admin"
+          ? "/dispatch"
+          : me.role === "driver"
+            ? "/driver"
+            : "/"
+      navigate({ to: dest })
     },
     onError: handleError.bind(showErrorToast),
   })

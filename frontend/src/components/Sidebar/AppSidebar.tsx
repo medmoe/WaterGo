@@ -1,4 +1,4 @@
-import { Home, Users } from "lucide-react"
+import { MapIcon, Truck, Users } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -12,15 +12,23 @@ import useAuth from "@/hooks/useAuth"
 import { type Item, Main } from "./Main"
 import { User } from "./User"
 
-const baseItems: Item[] = [{ icon: Home, title: "Dashboard", path: "/" }]
+const dispatchItems: Item[] = [
+  { icon: MapIcon, title: "Dispatch", path: "/dispatch" },
+]
+const driverItems: Item[] = [
+  { icon: Truck, title: "Ma tournée", path: "/driver" },
+]
+const adminItems: Item[] = [{ icon: Users, title: "Admin", path: "/admin" }]
 
 export function AppSidebar() {
   const { user: currentUser } = useAuth()
+  const role = currentUser?.role
 
-  const items =
-    currentUser?.role === "admin"
-      ? [...baseItems, { icon: Users, title: "Admin", path: "/admin" }]
-      : baseItems
+  const items: Item[] = [
+    ...(role === "dispatcher" || role === "admin" ? dispatchItems : []),
+    ...(role === "driver" || role === "admin" ? driverItems : []),
+    ...(role === "admin" ? adminItems : []),
+  ]
 
   return (
     <Sidebar collapsible="icon">
