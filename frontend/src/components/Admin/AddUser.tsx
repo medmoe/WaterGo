@@ -44,7 +44,9 @@ const formSchema = z.object({
   phone_number: z
     .string()
     .min(1, { message: "Phone number is required" })
-    .regex(/^\+?[0-9]{6,20}$/, { message: "Use E.164 format, e.g. +2135XXXXXXXX" }),
+    .regex(/^\+?[0-9]{6,20}$/, {
+      message: "Use E.164 format, e.g. +2135XXXXXXXX",
+    }),
   full_name: z.string().optional(),
   role: z.enum(["customer", "dispatcher", "driver", "admin"]),
   is_active: z.boolean(),
@@ -113,7 +115,11 @@ const AddUser = () => {
                       Phone number <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="+2135XXXXXXXX" type="tel" {...field} />
+                      <Input
+                        placeholder="+2135XXXXXXXX"
+                        type="tel"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

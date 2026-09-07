@@ -25,6 +25,44 @@ export type Message = {
 };
 
 /**
+ * OTPRequest
+ */
+export type OTPRequest = {
+    /**
+     * Phone Number
+     */
+    phone_number: string;
+};
+
+/**
+ * OTPVerify
+ */
+export type OTPVerify = {
+    /**
+     * Phone Number
+     */
+    phone_number: string;
+    /**
+     * Code
+     */
+    code: string;
+};
+
+/**
+ * Token
+ */
+export type Token = {
+    /**
+     * Access Token
+     */
+    access_token: string;
+    /**
+     * Token Type
+     */
+    token_type?: string;
+};
+
+/**
  * UserCreate
  */
 export type UserCreate = {
@@ -149,6 +187,56 @@ export type ValidationError = {
         [key: string]: unknown;
     };
 };
+
+export type authRequestOtpData = {
+    body: OTPRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/otp/request';
+};
+
+export type authRequestOtpErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type authRequestOtpError = authRequestOtpErrors[keyof authRequestOtpErrors];
+
+export type authRequestOtpResponses = {
+    /**
+     * Successful Response
+     */
+    200: Message;
+};
+
+export type authRequestOtpResponse = authRequestOtpResponses[keyof authRequestOtpResponses];
+
+export type authVerifyOtpData = {
+    body: OTPVerify;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/otp/verify';
+};
+
+export type authVerifyOtpErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type authVerifyOtpError = authVerifyOtpErrors[keyof authVerifyOtpErrors];
+
+export type authVerifyOtpResponses = {
+    /**
+     * Successful Response
+     */
+    200: Token;
+};
+
+export type authVerifyOtpResponse = authVerifyOtpResponses[keyof authVerifyOtpResponses];
 
 export type usersReadUsersData = {
     body?: never;

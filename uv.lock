@@ -99,6 +99,7 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "coverage" },
+    { name = "fakeredis" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "ruff" },
@@ -126,6 +127,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "coverage", specifier = ">=7.4.3,<8.0.0" },
+    { name = "fakeredis", specifier = ">=2.21.0,<3.0.0" },
     { name = "mypy", specifier = ">=1.8.0,<3.0.0" },
     { name = "pytest", specifier = ">=7.4.3,<10.0.0" },
     { name = "ruff", specifier = ">=0.2.2,<1.0.0" },
@@ -395,6 +397,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f5/22/900cb125c76b7aaa450ce02fd727f452243f2e91a61af068b40adba60ea9/email_validator-2.3.0.tar.gz", hash = "sha256:9fc05c37f2f6cf439ff414f8fc46d917929974a82244c20eb10231ba60c54426", size = 51238, upload-time = "2025-08-26T13:09:06.831Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/de/15/545e2b6cf2e3be84bc1ed85613edd75b8aea69807a71c26f4ca6a9258e82/email_validator-2.3.0-py3-none-any.whl", hash = "sha256:80f13f623413e6b197ae73bb10bf4eb0908faf509ad8362c5edeb0be7fd450b4", size = 35604, upload-time = "2025-08-26T13:09:05.858Z" },
+]
+
+[[package]]
+name = "fakeredis"
+version = "2.37.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "redis" },
+    { name = "sortedcontainers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/95/5e/fce3355d20d37dc18f7f4c422653ac69cabffa019afaaf607e26704fb829/fakeredis-2.37.1.tar.gz", hash = "sha256:9045851b0a9fe56312696aadc82435141aa43a193cab462d372c8fb583a7c087", size = 238182, upload-time = "2026-08-18T15:22:01.676Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/e0/fe1c760abd9e9cb5dfbce057b6582cb1ac36dfd8b5ce202e1445605c922d/fakeredis-2.37.1-py3-none-any.whl", hash = "sha256:f15c41be151c1e9206416dece764369a4dedb6b1341df3734c3c2c000e405508", size = 152738, upload-time = "2026-08-18T15:22:00.1Z" },
 ]
 
 [[package]]
@@ -1273,6 +1288,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/75/94/c99b76517c268ef8d5c2ff88faba5a019664bd69e4754944afa294b4f24c/smokeshow-0.5.0.tar.gz", hash = "sha256:91dcabc29ac3116bff59b4d8a7bda4ae3ccc4c70742a38cec7127b8162e4a0f6", size = 101349, upload-time = "2025-01-07T19:41:51.732Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/77/10/0d23e4953eb7c1e1ad848084b3115f19234f34f907658ed11bed0d826aee/smokeshow-0.5.0-py3-none-any.whl", hash = "sha256:da12a960fc7cb525efc4035a0c3c9363b6217ea7e66bc39b9ed3cd8bed6eeedc", size = 8389, upload-time = "2025-01-07T19:41:49.194Z" },
+]
+
+[[package]]
+name = "sortedcontainers"
+version = "2.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz", hash = "sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88", size = 30594, upload-time = "2021-05-16T22:03:42.897Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/32/46/9cb0e58b2deb7f82b84065f37f3bffeb12413f947f9388e4cac22c4621ce/sortedcontainers-2.4.0-py2.py3-none-any.whl", hash = "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0", size = 29575, upload-time = "2021-05-16T22:03:41.177Z" },
 ]
 
 [[package]]

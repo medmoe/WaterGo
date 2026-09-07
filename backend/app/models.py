@@ -450,3 +450,12 @@ class Token(SQLModel):
 
 class TokenPayload(SQLModel):
     sub: str | None = None
+
+
+class OTPRequest(SQLModel):
+    phone_number: str = Field(min_length=6, max_length=20)
+
+
+class OTPVerify(SQLModel):
+    phone_number: str = Field(min_length=6, max_length=20)
+    code: str = Field(min_length=4, max_length=8)

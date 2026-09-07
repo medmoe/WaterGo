@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
+import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -17,6 +17,46 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: Record<string, unknown>;
 };
+
+export class AuthService {
+    /**
+     * Request Otp
+     *
+     * Send a one-time code to the given phone number via SMS/WhatsApp.
+     *
+     * Always returns the same response so it can't be used to enumerate accounts.
+     */
+    public static requestOtp<ThrowOnError extends boolean = true>(options: Options<authRequestOtpData, ThrowOnError>) {
+        return (options.client ?? client).post<authRequestOtpResponses, authRequestOtpErrors, ThrowOnError>({
+            responseType: 'json',
+            url: '/api/v1/auth/otp/request',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+    
+    /**
+     * Verify Otp
+     *
+     * Verify a code and return a JWT. Creates the user (role=customer) on first
+     * successful login; pre-provisioned dispatcher/driver/admin accounts keep
+     * their role.
+     */
+    public static verifyOtp<ThrowOnError extends boolean = true>(options: Options<authVerifyOtpData, ThrowOnError>) {
+        return (options.client ?? client).post<authVerifyOtpResponses, authVerifyOtpErrors, ThrowOnError>({
+            responseType: 'json',
+            url: '/api/v1/auth/otp/verify',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+}
 
 export class UsersService {
     /**

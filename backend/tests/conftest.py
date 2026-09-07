@@ -1,5 +1,6 @@
 from collections.abc import Generator
 
+import fakeredis
 import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel
@@ -9,6 +10,14 @@ from app.core.db import engine, init_db
 from app.main import app
 from app.models import UserRole
 from tests.utils.user import authentication_token_from_phone
+
+
+@pytest.fixture(autouse=True)
+def fake_redis(monkeypatch: pytest.MonkeyPatch) -> fakeredis.FakeRedis:
+    """Back the OTP store with an in-memory Redis for every test."""
+    fake = fakeredis.FakeRedis(decode_responses=True)
+    monkeypatch.setattr("app.services.otp.get_redis", lambda: fake)
+    return fake
 
 
 @pytest.fixture(scope="session", autouse=True)

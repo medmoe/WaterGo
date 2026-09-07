@@ -35,18 +35,14 @@ export const columns: ColumnDef<UserTableData>[] = [
     accessorKey: "phone_number",
     header: "Phone",
     cell: ({ row }) => (
-      <span className="text-muted-foreground">
-        {row.original.phone_number}
-      </span>
+      <span className="text-muted-foreground">{row.original.phone_number}</span>
     ),
   },
   {
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => (
-      <Badge
-        variant={row.original.role === "admin" ? "default" : "secondary"}
-      >
+      <Badge variant={row.original.role === "admin" ? "default" : "secondary"}>
         {row.original.role ?? "customer"}
       </Badge>
     ),
