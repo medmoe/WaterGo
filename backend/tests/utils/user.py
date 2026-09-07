@@ -1,49 +1,41 @@
-from fastapi.testclient import TestClient
+from datetime import timedelta
+
 from sqlmodel import Session
 
 from app import crud
 from app.core.config import settings
-from app.models import User, UserCreate, UserUpdate
-from tests.utils.utils import random_email, random_lower_string
+from app.core.security import create_access_token
+from app.models import User, UserCreate
+from tests.utils.utils import random_email
 
 
-def user_authentication_headers(
-    *, client: TestClient, email: str, password: str
-) -> dict[str, str]:
-    data = {"username": email, "password": password}
+def get_auth_headers_for_user(user: User) -> dict[str, str]:
+    """Mint a JWT directly for the given user, bypassing the login flow.
 
-    r = client.post(f"{settings.API_V1_STR}/login/access-token", data=data)
-    response = r.json()
-    auth_token = response["access_token"]
-    headers = {"Authorization": f"Bearer {auth_token}"}
-    return headers
+    ``get_current_user`` only validates the token, so tests can build valid
+    credentials without going through the OTP endpoints.
+    """
+    token = create_access_token(
+        user.id, expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
+    return {"Authorization": f"Bearer {token}"}
 
 
-def create_random_user(db: Session) -> User:
-    email = random_email()
-    password = random_lower_string()
-    user_in = UserCreate(email=email, password=password)
-    user = crud.create_user(session=db, user_create=user_in)
-    return user
+def create_random_user(db: Session, *, is_superuser: bool = False) -> User:
+    user_in = UserCreate(email=random_email(), is_superuser=is_superuser)
+    return crud.create_user(session=db, user_create=user_in)
 
 
 def authentication_token_from_email(
-    *, client: TestClient, email: str, db: Session
+    *, email: str, db: Session, is_superuser: bool = False
 ) -> dict[str, str]:
     """
-    Return a valid token for the user with given email.
+    Return valid auth headers for the user with the given email.
 
     If the user doesn't exist it is created first.
     """
-    password = random_lower_string()
     user = crud.get_user_by_email(session=db, email=email)
     if not user:
-        user_in_create = UserCreate(email=email, password=password)
-        user = crud.create_user(session=db, user_create=user_in_create)
-    else:
-        user_in_update = UserUpdate(password=password)
-        if not user.id:
-            raise Exception("User id not set")
-        user = crud.update_user(session=db, db_user=user, user_in=user_in_update)
-
-    return user_authentication_headers(client=client, email=email, password=password)
+        user_in = UserCreate(email=email, is_superuser=is_superuser)
+        user = crud.create_user(session=db, user_create=user_in)
+    return get_auth_headers_for_user(user)
