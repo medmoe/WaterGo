@@ -1,4 +1,4 @@
-import { MapIcon, Truck, Users } from "lucide-react"
+import { Banknote, MapIcon, Truck, Users } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -18,7 +18,10 @@ const dispatchItems: Item[] = [
 const driverItems: Item[] = [
   { icon: Truck, title: "Ma tournée", path: "/driver" },
 ]
-const adminItems: Item[] = [{ icon: Users, title: "Admin", path: "/admin" }]
+const adminItems: Item[] = [
+  { icon: Users, title: "Admin", path: "/admin" },
+  { icon: Banknote, title: "Caisse", path: "/reports" },
+]
 
 export function AppSidebar() {
   const { user: currentUser } = useAuth()

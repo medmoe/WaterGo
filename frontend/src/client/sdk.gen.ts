@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, reviewsCreateReviewData, reviewsCreateReviewErrors, reviewsCreateReviewResponses, reviewsListReviewsData, reviewsListReviewsErrors, reviewsListReviewsResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
+import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, reportsCashReconciliationData, reportsCashReconciliationErrors, reportsCashReconciliationResponses, reviewsCreateReviewData, reviewsCreateReviewErrors, reviewsCreateReviewResponses, reviewsListReviewsData, reviewsListReviewsErrors, reviewsListReviewsResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -465,6 +465,23 @@ export class PricingService {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
+        });
+    }
+}
+
+export class ReportsService {
+    /**
+     * Cash Reconciliation
+     *
+     * Per-driver expected vs collected cash for delivered stops on a given day
+     * (defaults to today).
+     */
+    public static cashReconciliation<ThrowOnError extends boolean = true>(options?: Options<reportsCashReconciliationData, ThrowOnError>) {
+        return (options?.client ?? client).get<reportsCashReconciliationResponses, reportsCashReconciliationErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/admin/reports/cash-reconciliation',
+            ...options
         });
     }
 }

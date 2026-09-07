@@ -541,6 +541,28 @@ class ReviewsPublic(SQLModel):
 
 
 # ---------------------------------------------------------------------------
+# reports (section 13)
+# ---------------------------------------------------------------------------
+
+
+class DriverCashRow(SQLModel):
+    driver_id: uuid.UUID
+    driver_name: str | None
+    driver_phone: str
+    delivered_stops: int
+    expected_cash_dzd: Decimal
+    collected_stops: int
+    collected_cash_dzd: Decimal
+
+
+class CashReconciliationReport(SQLModel):
+    date: date
+    rows: list[DriverCashRow]
+    total_expected_dzd: Decimal
+    total_collected_dzd: Decimal
+
+
+# ---------------------------------------------------------------------------
 # notification_logs
 # ---------------------------------------------------------------------------
 

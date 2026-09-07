@@ -5,6 +5,62 @@ export type ClientOptions = {
 };
 
 /**
+ * CashReconciliationReport
+ */
+export type CashReconciliationReport = {
+    /**
+     * Date
+     */
+    date: string;
+    /**
+     * Rows
+     */
+    rows: Array<DriverCashRow>;
+    /**
+     * Total Expected Dzd
+     */
+    total_expected_dzd: string;
+    /**
+     * Total Collected Dzd
+     */
+    total_collected_dzd: string;
+};
+
+/**
+ * DriverCashRow
+ */
+export type DriverCashRow = {
+    /**
+     * Driver Id
+     */
+    driver_id: string;
+    /**
+     * Driver Name
+     */
+    driver_name: string | null;
+    /**
+     * Driver Phone
+     */
+    driver_phone: string;
+    /**
+     * Delivered Stops
+     */
+    delivered_stops: number;
+    /**
+     * Expected Cash Dzd
+     */
+    expected_cash_dzd: string;
+    /**
+     * Collected Stops
+     */
+    collected_stops: number;
+    /**
+     * Collected Cash Dzd
+     */
+    collected_cash_dzd: string;
+};
+
+/**
  * HTTPValidationError
  */
 export type HTTPValidationError = {
@@ -1513,6 +1569,36 @@ export type pricingCreatePricingResponses = {
 };
 
 export type pricingCreatePricingResponse = pricingCreatePricingResponses[keyof pricingCreatePricingResponses];
+
+export type reportsCashReconciliationData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Date
+         */
+        date?: string | null;
+    };
+    url: '/api/v1/admin/reports/cash-reconciliation';
+};
+
+export type reportsCashReconciliationErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type reportsCashReconciliationError = reportsCashReconciliationErrors[keyof reportsCashReconciliationErrors];
+
+export type reportsCashReconciliationResponses = {
+    /**
+     * Successful Response
+     */
+    200: CashReconciliationReport;
+};
+
+export type reportsCashReconciliationResponse = reportsCashReconciliationResponses[keyof reportsCashReconciliationResponses];
 
 export type reviewsListReviewsData = {
     body?: never;

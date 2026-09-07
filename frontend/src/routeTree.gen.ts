@@ -15,6 +15,7 @@ import { Route as DispatchRouteImport } from './routes/dispatch'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutReportsRouteImport } from './routes/_layout/reports'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as ReviewOrderIdRouteImport } from './routes/review.$orderId'
 import { Route as TrackOrderIdRouteImport } from './routes/track.$orderId'
@@ -48,6 +49,11 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutReportsRoute = LayoutReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/driver': typeof DriverRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
+  '/reports': typeof LayoutReportsRoute
   '/settings': typeof LayoutSettingsRoute
   '/review/$orderId': typeof ReviewOrderIdRoute
   '/track/$orderId': typeof TrackOrderIdRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/driver': typeof DriverRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
+  '/reports': typeof LayoutReportsRoute
   '/settings': typeof LayoutSettingsRoute
   '/review/$orderId': typeof ReviewOrderIdRoute
   '/track/$orderId': typeof TrackOrderIdRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/driver': typeof DriverRoute
   '/login': typeof LoginRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/reports': typeof LayoutReportsRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/review/$orderId': typeof ReviewOrderIdRoute
   '/track/$orderId': typeof TrackOrderIdRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
     | '/driver'
     | '/login'
     | '/admin'
+    | '/reports'
     | '/settings'
     | '/review/$orderId'
     | '/track/$orderId'
@@ -114,6 +124,7 @@ export interface FileRouteTypes {
     | '/driver'
     | '/login'
     | '/admin'
+    | '/reports'
     | '/settings'
     | '/review/$orderId'
     | '/track/$orderId'
@@ -125,6 +136,7 @@ export interface FileRouteTypes {
     | '/driver'
     | '/login'
     | '/_layout/admin'
+    | '/_layout/reports'
     | '/_layout/settings'
     | '/review/$orderId'
     | '/track/$orderId'
@@ -184,6 +196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/reports': {
+      id: '/_layout/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof LayoutReportsRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
@@ -210,11 +229,13 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutReportsRoute: typeof LayoutReportsRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutReportsRoute: LayoutReportsRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
 }
 
