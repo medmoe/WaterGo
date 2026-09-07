@@ -38,6 +38,21 @@ class Settings(BaseSettings):
                 return database_url.replace(scheme, "postgresql+psycopg://", 1)
         return database_url
 
+    POSTGIS_ENABLED: bool = True
+
+    # Redis is the Celery broker/result backend and the OTP code store.
+    REDIS_URL: str = "redis://localhost:6379/0"
+
+    # OTP auth (section 9)
+    OTP_EXPIRY_SECONDS: int = 300
+
+    # SMS / WhatsApp provider (section 11) - stubbed until a gateway is chosen.
+    SMS_PROVIDER_API_KEY: str | None = None
+    SMS_PROVIDER_BASE_URL: str | None = None
+
+    # Route clustering (section 12) - not wired up yet.
+    ROUTE_CLUSTER_DISTANCE_METERS: int = 1500
+
     EMAIL_TEST_USER: EmailStr = "test@example.com"
     FIRST_SUPERUSER: EmailStr
     FIRST_SUPERUSER_PASSWORD: str

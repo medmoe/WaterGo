@@ -27,6 +27,10 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    ports:
+      - "6379:6379"
+
   adminer:
     ports:
       - "8080:8080"
@@ -64,15 +68,36 @@ services:
       - ./backend/htmlcov:/app/backend/htmlcov
     environment:
       FASTAPI_ENV: "development"
-      SMTP_HOST: "mailpit"
-      SMTP_PORT: "1025"
-      SMTP_TLS: "false"
 
-  mailpit:
-    image: axllent/mailpit
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command:
+      - celery
+      - -A
+      - app.worker.celery_app
+      - worker
+      - --loglevel=info
+    develop:
+      watch:
+        - path: ./backend
+          action: sync
+          target: /app/backend
+          ignore:
+            - .venv
+        - path: ./backend/pyproject.toml
+          action: rebuild
+    environment:
+      FASTAPI_ENV: "development"
+
+  flower:
+    image: mher/flower:2.0
+    command: ["celery", "--broker=redis://redis:6379/0", "flower"]
+    depends_on:
+      - redis
     ports:
-      - "8025:8025"
-      - "1025:1025"
+      - "5555:5555"
 
   playwright:
     build:
@@ -83,13 +108,11 @@ services:
     ipc: host
     depends_on:
       - backend
-      - mailpit
     environment:
       - FIRST_SUPERUSER=${FIRST_SUPERUSER:?Variable not set}
       - FIRST_SUPERUSER_PASSWORD=${FIRST_SUPERUSER_PASSWORD:?Variable not set}
       - PLAYWRIGHT_BASE_URL=http://backend:8000
       - VITE_API_URL=http://backend:8000
-      - MAILPIT_HOST=http://mailpit:8025
       # For the reports when run locally
       - PLAYWRIGHT_HTML_HOST=0.0.0.0
       - CI=${CI:-}
