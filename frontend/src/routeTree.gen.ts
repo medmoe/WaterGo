@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
+import { Route as ReviewOrderIdRouteImport } from './routes/review.$orderId'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -39,17 +40,24 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => LayoutRoute,
 } as any)
+const ReviewOrderIdRoute = ReviewOrderIdRouteImport.update({
+  id: '/review/$orderId',
+  path: '/review/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
   '/settings': typeof LayoutSettingsRoute
+  '/review/$orderId': typeof ReviewOrderIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/admin': typeof LayoutAdminRoute
   '/settings': typeof LayoutSettingsRoute
+  '/review/$orderId': typeof ReviewOrderIdRoute
   '/': typeof LayoutIndexRoute
 }
 export interface FileRoutesById {
@@ -58,25 +66,28 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/settings': typeof LayoutSettingsRoute
+  '/review/$orderId': typeof ReviewOrderIdRoute
   '/_layout/': typeof LayoutIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/admin' | '/settings'
+  fullPaths: '/' | '/login' | '/admin' | '/settings' | '/review/$orderId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/admin' | '/settings' | '/'
+  to: '/login' | '/admin' | '/settings' | '/review/$orderId' | '/'
   id:
     | '__root__'
     | '/_layout'
     | '/login'
     | '/_layout/admin'
     | '/_layout/settings'
+    | '/review/$orderId'
     | '/_layout/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   LayoutRoute: typeof LayoutRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ReviewOrderIdRoute: typeof ReviewOrderIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSettingsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/review/$orderId': {
+      id: '/review/$orderId'
+      path: '/review/$orderId'
+      fullPath: '/review/$orderId'
+      preLoaderRoute: typeof ReviewOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -137,6 +155,7 @@ const LayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   LayoutRoute: LayoutRouteWithChildren,
   LoginRoute: LoginRoute,
+  ReviewOrderIdRoute: ReviewOrderIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

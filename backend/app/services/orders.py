@@ -81,6 +81,11 @@ def create_order(
     session.add(order)
     session.commit()
     session.refresh(order)
+
+    from app.models import NotificationPurpose
+    from app.tasks import enqueue_notification
+
+    enqueue_notification(order.id, NotificationPurpose.order_received)
     return order
 
 

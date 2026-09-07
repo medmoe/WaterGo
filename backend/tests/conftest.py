@@ -9,7 +9,12 @@ from app.core.config import settings
 from app.core.db import engine, init_db
 from app.main import app
 from app.models import UserRole
+from app.worker import celery_app
 from tests.utils.user import authentication_token_from_phone
+
+# Run Celery tasks inline instead of over a real broker.
+celery_app.conf.task_always_eager = True
+celery_app.conf.task_eager_propagates = False
 
 
 @pytest.fixture(autouse=True)

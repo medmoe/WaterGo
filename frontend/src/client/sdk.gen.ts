@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
+import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, reviewsCreateReviewData, reviewsCreateReviewErrors, reviewsCreateReviewResponses, reviewsListReviewsData, reviewsListReviewsErrors, reviewsListReviewsResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -460,6 +460,42 @@ export class PricingService {
             responseType: 'json',
             security: [{ scheme: 'bearer', type: 'http' }],
             url: '/api/v1/pricing',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+    }
+}
+
+export class ReviewsService {
+    /**
+     * List Reviews
+     *
+     * Reviews, for the owner's internal reporting (admin only).
+     */
+    public static listReviews<ThrowOnError extends boolean = true>(options?: Options<reviewsListReviewsData, ThrowOnError>) {
+        return (options?.client ?? client).get<reviewsListReviewsResponses, reviewsListReviewsErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/reviews',
+            ...options
+        });
+    }
+    
+    /**
+     * Create Review
+     *
+     * Leave a rating for a delivered order. Authorised either by the signed
+     * review token from the SMS link (no login) or by the logged-in customer /
+     * an admin.
+     */
+    public static createReview<ThrowOnError extends boolean = true>(options: Options<reviewsCreateReviewData, ThrowOnError>) {
+        return (options.client ?? client).post<reviewsCreateReviewResponses, reviewsCreateReviewErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/reviews',
             ...options,
             headers: {
                 'Content-Type': 'application/json',

@@ -6,6 +6,7 @@ from app.api.routes import (
     driver,
     orders,
     pricing,
+    reviews,
     users,
     utils,
     vehicles,
@@ -20,5 +21,6 @@ api_router.include_router(dispatch.router)
 api_router.include_router(driver.router)
 api_router.include_router(vehicles.router)
 api_router.include_router(pricing.router)
+api_router.include_router(reviews.router)
 api_router.include_router(ws.router)
 api_router.include_router(utils.router)

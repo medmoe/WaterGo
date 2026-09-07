@@ -348,6 +348,72 @@ export type PricingSettingPublic = {
 };
 
 /**
+ * ReviewCreate
+ */
+export type ReviewCreate = {
+    /**
+     * Rating
+     */
+    rating: number;
+    /**
+     * Comment
+     */
+    comment?: string | null;
+    /**
+     * Order Id
+     */
+    order_id: string;
+    /**
+     * Token
+     */
+    token?: string | null;
+};
+
+/**
+ * ReviewPublic
+ */
+export type ReviewPublic = {
+    /**
+     * Rating
+     */
+    rating: number;
+    /**
+     * Comment
+     */
+    comment?: string | null;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Order Id
+     */
+    order_id: string;
+    /**
+     * Customer Id
+     */
+    customer_id: string | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+};
+
+/**
+ * ReviewsPublic
+ */
+export type ReviewsPublic = {
+    /**
+     * Data
+     */
+    data: Array<ReviewPublic>;
+    /**
+     * Count
+     */
+    count: number;
+};
+
+/**
  * RouteCreate
  */
 export type RouteCreate = {
@@ -1447,6 +1513,61 @@ export type pricingCreatePricingResponses = {
 };
 
 export type pricingCreatePricingResponse = pricingCreatePricingResponses[keyof pricingCreatePricingResponses];
+
+export type reviewsListReviewsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Order Id
+         */
+        order_id?: string | null;
+    };
+    url: '/api/v1/reviews';
+};
+
+export type reviewsListReviewsErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type reviewsListReviewsError = reviewsListReviewsErrors[keyof reviewsListReviewsErrors];
+
+export type reviewsListReviewsResponses = {
+    /**
+     * Successful Response
+     */
+    200: ReviewsPublic;
+};
+
+export type reviewsListReviewsResponse = reviewsListReviewsResponses[keyof reviewsListReviewsResponses];
+
+export type reviewsCreateReviewData = {
+    body: ReviewCreate;
+    path?: never;
+    query?: never;
+    url: '/api/v1/reviews';
+};
+
+export type reviewsCreateReviewErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type reviewsCreateReviewError = reviewsCreateReviewErrors[keyof reviewsCreateReviewErrors];
+
+export type reviewsCreateReviewResponses = {
+    /**
+     * Successful Response
+     */
+    200: ReviewPublic;
+};
+
+export type reviewsCreateReviewResponse = reviewsCreateReviewResponses[keyof reviewsCreateReviewResponses];
 
 export type utilsHealthCheckData = {
     body?: never;

@@ -523,11 +523,21 @@ class Review(ReviewBase, TimestampMixin, table=True):
     order: Order | None = Relationship(back_populates="review")
 
 
+class ReviewCreate(ReviewBase):
+    order_id: uuid.UUID
+    token: str | None = None
+
+
 class ReviewPublic(ReviewBase):
     id: uuid.UUID
     order_id: uuid.UUID
     customer_id: uuid.UUID | None
     created_at: datetime
+
+
+class ReviewsPublic(SQLModel):
+    data: list[ReviewPublic]
+    count: int
 
 
 # ---------------------------------------------------------------------------

@@ -236,6 +236,10 @@ def mark_delivered(session: Session, stop_id: UUID, driver: User) -> RouteStop:
     session.add(stop)
     session.commit()
     session.refresh(stop)
+
+    from app.tasks import enqueue_review_request
+
+    enqueue_review_request(order.id)
     return stop
 
 

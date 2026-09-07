@@ -4,7 +4,15 @@ from datetime import UTC, datetime
 
 from sqlmodel import Session
 
-from app.models import Order, OrderStatus, Route, User, UserRole, Vehicle
+from app.models import (
+    Order,
+    OrderStatus,
+    Route,
+    RouteStatus,
+    User,
+    UserRole,
+    Vehicle,
+)
 from app.services import orders as orders_service
 from app.services import routes as routes_service
 from tests.utils.order import create_random_order
@@ -46,3 +54,14 @@ def build_route(
         planned_date=datetime.now(UTC).date(),
         order_ids=order_ids,
     )
+
+
+def deliver_order(db: Session) -> Order:
+    """Take a brand-new order all the way to delivered."""
+    driver = create_random_user(db, role=UserRole.driver)
+    route = build_route(db, driver=driver, n_orders=1)
+    routes_service.update_route(db, route, status=RouteStatus.in_progress)
+    routes_service.mark_delivered(db, route.stops[0].id, driver)
+    order = db.get(Order, route.stops[0].order_id)
+    assert order and order.status == OrderStatus.delivered
+    return order
