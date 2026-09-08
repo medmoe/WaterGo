@@ -77,7 +77,16 @@ services:
       ROUTE_CLUSTER_DISTANCE_METERS: ${ROUTE_CLUSTER_DISTANCE_METERS:-1500}
       SMS_PROVIDER_API_KEY: ${SMS_PROVIDER_API_KEY:-}
       SMS_PROVIDER_BASE_URL: ${SMS_PROVIDER_BASE_URL:-}
+      SMS_GATEWAY_BASE_URL: ${SMS_GATEWAY_BASE_URL:-}
+      SMS_GATEWAY_API_KEY: ${SMS_GATEWAY_API_KEY:-}
+      SMS_GATEWAY_DEVICE_ID: ${SMS_GATEWAY_DEVICE_ID:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
+    env_file:
+      # Real secrets (bot token, gateway creds) live here, git-ignored.
+      - path: .env.local
+        required: false
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
@@ -119,11 +128,20 @@ services:
       ROUTE_CLUSTER_DISTANCE_METERS: ${ROUTE_CLUSTER_DISTANCE_METERS:-1500}
       SMS_PROVIDER_API_KEY: ${SMS_PROVIDER_API_KEY:-}
       SMS_PROVIDER_BASE_URL: ${SMS_PROVIDER_BASE_URL:-}
+      SMS_GATEWAY_BASE_URL: ${SMS_GATEWAY_BASE_URL:-}
+      SMS_GATEWAY_API_KEY: ${SMS_GATEWAY_API_KEY:-}
+      SMS_GATEWAY_DEVICE_ID: ${SMS_GATEWAY_DEVICE_ID:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
+    env_file:
+      # Real secrets (bot token, gateway creds) live here, git-ignored.
+      - path: .env.local
+        required: false
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: ["celery", "-A", "app.worker.celery_app", "worker", "--loglevel=info"]
+    command: ["celery", "-A", "app.worker.celery_app", "worker", "-B", "--loglevel=info"]
 
 volumes:
   app-db-data:

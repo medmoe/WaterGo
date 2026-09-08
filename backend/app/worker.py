@@ -22,6 +22,13 @@ celery_app.conf.update(
     result_serializer="json",
     accept_content=["json"],
     timezone="UTC",
+    # Periodic jobs (run the worker with -B, or a dedicated `celery beat`).
+    beat_schedule={
+        "sms-gateway-healthcheck": {
+            "task": "app.tasks.sms_gateway_healthcheck",
+            "schedule": 300.0,
+        },
+    },
 )
 
 # Import task modules so Celery registers them once they exist.

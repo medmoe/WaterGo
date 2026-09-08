@@ -112,6 +112,10 @@ def create_route(
             "stop_count": len(orders),
         },
     )
+
+    from app.tasks import enqueue_route_assigned_notification
+
+    enqueue_route_assigned_notification(route.id)
     return route
 
 

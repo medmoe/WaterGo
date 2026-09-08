@@ -16,8 +16,10 @@ from app.models import (
     NotificationStatus,
     Order,
     OrderStatus,
+    Route,
+    UserRole,
 )
-from app.services import notifications
+from app.services import notifications, telegram
 from app.services import reviews as reviews_service
 from app.worker import celery_app
 
@@ -115,6 +117,56 @@ def request_review(order_id: str) -> None:
         )
 
 
+# --------------------------------------------------------------------------
+# Internal-team Telegram notifications (Part B)
+# --------------------------------------------------------------------------
+
+
+@celery_app.task(name="app.tasks.notify_dispatchers_new_order")
+def notify_dispatchers_new_order(order_id: str) -> None:
+    with Session(engine) as session:
+        order = session.get(Order, UUID(order_id))
+        if not order:
+            return
+        loc = order.location
+        where = f"{loc.landmark_text}, {loc.commune}" if loc else "?"
+        telegram.send_to_role(
+            session,
+            UserRole.dispatcher,
+            f"🆕 Nouvelle commande : {order.quantity_liters} L\n"
+            f"{where}\nTél : {order.customer_phone}",
+        )
+
+
+@celery_app.task(name="app.tasks.notify_driver_route_assigned")
+def notify_driver_route_assigned(route_id: str) -> None:
+    with Session(engine) as session:
+        route = session.get(Route, UUID(route_id))
+        if route is None or not route.driver or not route.driver.telegram_chat_id:
+            return
+        telegram.send_message(
+            route.driver.telegram_chat_id,
+            f"🚚 Nouvelle tournée pour le {route.planned_date} — "
+            f"{len(route.stops)} arrêt(s).",
+        )
+
+
+@celery_app.task(name="app.tasks.sms_gateway_healthcheck")
+def sms_gateway_healthcheck() -> None:
+    """Alert dispatchers on Telegram if the SMS gateway is unreachable (A.5)."""
+    healthy = notifications.provider_healthy()
+    if healthy is None or healthy:
+        return
+    logger.error("SMS gateway health check failed")
+    with Session(engine) as session:
+        telegram.send_to_role(
+            session,
+            UserRole.dispatcher,
+            "⚠️ La passerelle SMS est injoignable — les SMS clients (OTP, "
+            "confirmations) ne partent plus. Vérifiez le téléphone.",
+        )
+
+
 def enqueue_notification(order_id: UUID, purpose: NotificationPurpose) -> None:
     """Fire-and-forget helper for the service layer; never raises."""
     try:
@@ -128,3 +180,17 @@ def enqueue_review_request(order_id: UUID) -> None:
         request_review.delay(str(order_id))
     except Exception:  # noqa: BLE001
         logger.exception("failed to enqueue request_review for %s", order_id)
+
+
+def enqueue_new_order_notification(order_id: UUID) -> None:
+    try:
+        notify_dispatchers_new_order.delay(str(order_id))
+    except Exception:  # noqa: BLE001
+        logger.exception("failed to enqueue new-order Telegram for %s", order_id)
+
+
+def enqueue_route_assigned_notification(route_id: UUID) -> None:
+    try:
+        notify_driver_route_assigned.delay(str(route_id))
+    except Exception:  # noqa: BLE001
+        logger.exception("failed to enqueue route-assigned Telegram for %s", route_id)

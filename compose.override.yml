@@ -78,6 +78,7 @@ services:
       - -A
       - app.worker.celery_app
       - worker
+      - -B
       - --loglevel=info
     develop:
       watch:
