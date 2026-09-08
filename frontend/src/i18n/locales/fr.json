@@ -1,0 +1,209 @@
+{
+  "lang": {
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية",
+    "label": "Langue"
+  },
+  "common": {
+    "appName": "Batna Water",
+    "region": "Wilaya de Batna",
+    "cashOnDelivery": "paiement en espèces à la livraison",
+    "liters": "litres",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "na": "N/A",
+    "actions": "Actions",
+    "backHome": "Retour à l'accueil"
+  },
+  "nav": {
+    "dispatch": "Dispatch",
+    "driver": "Ma tournée",
+    "admin": "Utilisateurs",
+    "reports": "Caisse",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "status": {
+    "pending": "Reçue",
+    "confirmed": "Confirmée par téléphone",
+    "assigned": "Planifiée sur une tournée",
+    "en_route": "En route",
+    "delivered": "Livrée",
+    "cancelled": "Annulée"
+  },
+  "roles": {
+    "customer": "Client",
+    "dispatcher": "Dispatcher",
+    "driver": "Chauffeur",
+    "admin": "Admin"
+  },
+  "order": {
+    "title": "Commander une livraison d'eau",
+    "subtitle": "Wilaya de Batna · paiement en espèces à la livraison",
+    "whereTitle": "Où livrer ?",
+    "pinHint": "Touchez la carte pour placer un repère.",
+    "pinSet": "Point sélectionné : {{lat}}, {{lng}}",
+    "landmark": "Point de repère",
+    "landmarkPh": "près de la mosquée El Atik",
+    "commune": "Commune",
+    "communePh": "Batna",
+    "orderTitle": "Votre commande",
+    "quantity": "Quantité (litres) — max {{max}}",
+    "phone": "Numéro de téléphone",
+    "phonePh": "+2135XXXXXXXX",
+    "priceLine": "{{price}} DZD / litre",
+    "totalLine": "Total {{total}} DZD",
+    "submit": "Envoyer la commande",
+    "error": "Impossible d'envoyer la commande. Vérifiez les champs et réessayez.",
+    "staffArea": "Espace équipe"
+  },
+  "track": {
+    "title": "Suivi de commande",
+    "ref": "Réf. {{ref}}",
+    "confirmNumberTitle": "Confirmez votre numéro",
+    "phoneLabel": "Téléphone utilisé pour la commande",
+    "error": "Numéro incorrect ou commande introuvable.",
+    "newOrder": "Nouvelle commande",
+    "cashNote": "{{liters}} L · {{total}} DZD à payer en espèces",
+    "cancelledLine": "{{label}} — {{reason}}"
+  },
+  "review": {
+    "title": "Notez votre livraison",
+    "subtitle": "Comment s'est passée votre commande ?",
+    "stars": "{{n}} étoiles",
+    "commentPh": "Un commentaire (facultatif)",
+    "error": "Ce lien n'est plus valide ou l'avis a déjà été envoyé.",
+    "chooseRating": "Choisissez une note",
+    "submit": "Envoyer",
+    "thanks": "Merci !",
+    "thanksSub": "Votre avis a bien été enregistré."
+  },
+  "login": {
+    "title": "Connexion",
+    "subDefault": "Nous vous enverrons un code par SMS",
+    "subSent": "Saisissez le code envoyé au {{phone}}",
+    "phone": "Numéro de téléphone",
+    "phonePh": "+2135XXXXXXXX",
+    "sendCode": "Envoyer le code",
+    "code": "Code de vérification",
+    "codePh": "123456",
+    "verify": "Vérifier",
+    "useOther": "Utiliser un autre numéro"
+  },
+  "dispatch": {
+    "title": "Tableau de dispatch",
+    "tabConfirm": "À confirmer ({{count}})",
+    "tabBuild": "Carte & tournées",
+    "tabRoutes": "Tournées",
+    "tabFleet": "Flotte",
+    "noPending": "Aucune commande en attente.",
+    "confirm": "Confirmer",
+    "newRoute": "Nouvelle tournée ({{count}} arrêts)",
+    "noConfirmed": "Aucune commande confirmée sans tournée.",
+    "truck": "Camion",
+    "driver": "Chauffeur",
+    "date": "Date",
+    "create": "Créer la tournée",
+    "createError": "Impossible de créer la tournée (vérifiez le chauffeur et les commandes).",
+    "routeSummary": "{{date}} · {{count}} arrêts · {{status}}",
+    "start": "Démarrer",
+    "finish": "Terminer",
+    "plate": "Plaque",
+    "capacity": "Capacité (L)",
+    "confirmMeta": "{{liters}} L · {{landmark}} · {{commune}}",
+    "listMeta": "{{phone}} · {{liters}} L · {{commune}}"
+  },
+  "driver": {
+    "title": "Ma tournée",
+    "noneToday": "Aucune tournée pour aujourd'hui.",
+    "header": "{{date}} · {{status}} · {{count}} arrêts",
+    "waiting": "En attente du démarrage par le dispatch.",
+    "stop": "Arrêt {{n}}",
+    "delivered": "livré",
+    "toDeliver": "à livrer",
+    "paidTag": "payé",
+    "markDelivered": "Marquer livré",
+    "collectCash": "Cash encaissé",
+    "stopMeta": "{{phone}} · {{liters}} L · {{total}} DZD"
+  },
+  "reports": {
+    "title": "Rapprochement de caisse",
+    "subtitle": "Cash attendu vs encaissé par chauffeur, arrêts livrés.",
+    "date": "Date",
+    "totals": "Total attendu {{expected}} DZD · encaissé {{collected}} DZD",
+    "driver": "Chauffeur",
+    "deliveredStops": "Arrêts livrés",
+    "expected": "Attendu (DZD)",
+    "collectedCount": "Encaissés",
+    "collected": "Encaissé (DZD)",
+    "none": "Aucune livraison ce jour-là."
+  },
+  "settings": {
+    "title": "Paramètres du compte",
+    "subtitle": "Gérez les paramètres et préférences de votre compte",
+    "tabProfile": "Mon profil",
+    "tabDanger": "Zone sensible",
+    "userInfo": "Informations personnelles",
+    "fullName": "Nom complet",
+    "phone": "Numéro de téléphone",
+    "deleteAccountTitle": "Supprimer le compte",
+    "deleteAccountDesc": "Supprimer définitivement votre compte et toutes les données associées.",
+    "updated": "Profil mis à jour",
+    "accountDeleted": "Votre compte a été supprimé",
+    "confirmTitle": "Confirmation requise",
+    "confirmDesc": "Cette action supprimera définitivement votre compte. Cliquez sur « Confirmer » pour continuer. Elle est irréversible.",
+    "confirm": "Confirmer"
+  },
+  "admin": {
+    "title": "Utilisateurs",
+    "subtitle": "Gérer les comptes et les autorisations",
+    "addUser": "Ajouter un utilisateur",
+    "addUserDesc": "Créer un compte dispatcher, chauffeur ou admin.",
+    "editUser": "Modifier l'utilisateur",
+    "editUserDesc": "Mettez à jour les informations ci-dessous.",
+    "deleteUser": "Supprimer l'utilisateur",
+    "deleteUserConfirm": "Cet utilisateur sera définitivement supprimé. Êtes-vous sûr ? Cette action est irréversible.",
+    "phone": "Numéro de téléphone",
+    "fullName": "Nom complet",
+    "role": "Rôle",
+    "isActive": "Actif ?",
+    "colRole": "Rôle",
+    "colStatus": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "you": "Vous",
+    "created": "Utilisateur créé",
+    "updated": "Utilisateur mis à jour",
+    "deleted": "Utilisateur supprimé",
+    "colFullName": "Nom complet",
+    "colPhone": "Téléphone",
+    "fullNamePh": "Nom complet",
+    "userDeleted": "Utilisateur supprimé"
+  },
+  "appearance": {
+    "label": "Apparence",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "message": "La page que vous cherchez n'existe pas."
+  },
+  "errorPage": {
+    "title": "Une erreur est survenue",
+    "message": "Quelque chose s'est mal passé. Réessayez plus tard."
+  },
+  "routeStatus": {
+    "planned": "planifiée",
+    "in_progress": "en cours",
+    "completed": "terminée"
+  },
+  "form": {
+    "phoneRequired": "Le numéro de téléphone est requis",
+    "phoneFormat": "Format international, ex. +2135XXXXXXXX"
+  }
+}

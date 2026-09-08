@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { type UserCreate, type UserRole, UsersService } from "@/client"
@@ -43,10 +44,8 @@ const ROLES: UserRole[] = ["customer", "dispatcher", "driver", "admin"]
 const formSchema = z.object({
   phone_number: z
     .string()
-    .min(1, { message: "Phone number is required" })
-    .regex(/^\+?[0-9]{6,20}$/, {
-      message: "Use E.164 format, e.g. +2135XXXXXXXX",
-    }),
+    .min(1)
+    .regex(/^\+?[0-9]{6,20}$/),
   full_name: z.string().optional(),
   role: z.enum(["customer", "dispatcher", "driver", "admin"]),
   is_active: z.boolean(),
@@ -55,6 +54,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 const AddUser = () => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -74,7 +74,7 @@ const AddUser = () => {
   const mutation = useMutation({
     mutationFn: (data: UserCreate) => UsersService.createUser({ body: data }),
     onSuccess: () => {
-      showSuccessToast("User created successfully")
+      showSuccessToast(t("admin.created"))
       form.reset()
       setIsOpen(false)
     },
@@ -98,10 +98,8 @@ const AddUser = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
-          <DialogDescription>
-            Create a dispatcher, driver or admin account.
-          </DialogDescription>
+          <DialogTitle>{t("admin.addUser")}</DialogTitle>
+          <DialogDescription>{t("admin.addUserDesc")}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -112,11 +110,12 @@ const AddUser = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Phone number <span className="text-destructive">*</span>
+                      {t("admin.phone")}{" "}
+                      <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="+2135XXXXXXXX"
+                        placeholder={t("order.phonePh")}
                         type="tel"
                         {...field}
                       />
@@ -131,9 +130,13 @@ const AddUser = () => {
                 name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t("admin.fullName")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Full name" type="text" {...field} />
+                      <Input
+                        placeholder={t("admin.fullNamePh")}
+                        type="text"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -145,7 +148,7 @@ const AddUser = () => {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>{t("admin.role")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -158,7 +161,7 @@ const AddUser = () => {
                       <SelectContent>
                         {ROLES.map((role) => (
                           <SelectItem key={role} value={role}>
-                            {role}
+                            {t(`roles.${role}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -179,7 +182,9 @@ const AddUser = () => {
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="font-normal">Is active?</FormLabel>
+                    <FormLabel className="font-normal">
+                      {t("admin.isActive")}
+                    </FormLabel>
                   </FormItem>
                 )}
               />
@@ -188,11 +193,11 @@ const AddUser = () => {
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" disabled={mutation.isPending}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </DialogClose>
               <LoadingButton type="submit" loading={mutation.isPending}>
-                Save
+                {t("common.save")}
               </LoadingButton>
             </DialogFooter>
           </form>

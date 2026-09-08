@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { UsersService, type UserUpdateMe } from "@/client"
@@ -28,6 +29,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>
 
 const UserInformation = () => {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
   const [editMode, setEditMode] = useState(false)
@@ -50,7 +52,7 @@ const UserInformation = () => {
     mutationFn: (data: UserUpdateMe) =>
       UsersService.updateUserMe({ body: data }),
     onSuccess: () => {
-      showSuccessToast("User updated successfully")
+      showSuccessToast(t("settings.updated"))
       toggleEditMode()
     },
     onError: handleError.bind(showErrorToast),
@@ -70,7 +72,7 @@ const UserInformation = () => {
 
   return (
     <div className="max-w-md">
-      <h3 className="text-lg font-semibold py-4">User Information</h3>
+      <h3 className="text-lg font-semibold py-4">{t("settings.userInfo")}</h3>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -82,7 +84,7 @@ const UserInformation = () => {
             render={({ field }) =>
               editMode ? (
                 <FormItem>
-                  <FormLabel>Full name</FormLabel>
+                  <FormLabel>{t("settings.fullName")}</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} />
                   </FormControl>
@@ -90,14 +92,14 @@ const UserInformation = () => {
                 </FormItem>
               ) : (
                 <FormItem>
-                  <FormLabel>Full name</FormLabel>
+                  <FormLabel>{t("settings.fullName")}</FormLabel>
                   <p
                     className={cn(
                       "py-2 truncate max-w-sm",
                       !field.value && "text-muted-foreground",
                     )}
                   >
-                    {field.value || "N/A"}
+                    {field.value || t("common.na")}
                   </p>
                 </FormItem>
               )
@@ -105,7 +107,7 @@ const UserInformation = () => {
           />
 
           <FormItem>
-            <FormLabel>Phone number</FormLabel>
+            <FormLabel>{t("settings.phone")}</FormLabel>
             <p className="py-2 truncate max-w-sm">
               {currentUser?.phone_number}
             </p>

@@ -412,7 +412,34 @@ compose `playwright` service or `bunx playwright test`).
 
 ---
 
-## 16. Deferred
+## 16. Internationalisation (FR / EN / AR)
+
+> §19 lists multi-language UI as out of scope for the initial pass ("confirm which
+> language with the client first"). Added afterwards **at the client's direction**:
+> French kept, English and Arabic added, user-selectable.
+
+- `i18next` + `react-i18next` + `i18next-browser-languagedetector`. Config in
+  `src/i18n/index.ts`; resources in `src/i18n/locales/{fr,en,ar}.json` (169 keys each,
+  key sets kept parallel — there's a check in the build guard). `fallbackLng: "fr"`.
+- Language is detected from `localStorage["watergo-lang"]` then the browser, and
+  persisted on change. `applyDirection()` sets `<html lang>` and `<html dir>`
+  (`rtl` for `ar`, `ltr` otherwise) on load and on every `languageChanged`.
+- `LanguageSwitcher` component — in `AuthLayout` (login / review), `PublicTopBar`
+  (customer `/` and `/track`), and the app sidebar footer.
+- Numbers/prices go through `src/lib/format.ts::fmtNumber` → `Intl.NumberFormat`
+  with `ar-DZ` / `fr-DZ` / `en` so Arabic keeps Latin digits for money.
+- Coverage: every custom route (`/`, `/track`, `/review`, `/login`, `/dispatch`,
+  `/driver`, `/reports`), the sidebar, settings, admin user-management dialogs,
+  not-found / error pages, and the appearance menu. Order/route **statuses** and
+  **roles** are translated via `t(\`status.${x}\`)` / `t(\`roles.${x}\`)` /
+  `t(\`routeStatus.${x}\`)`.
+- Playwright: `login-otp.spec.ts` adds a switcher + RTL assertion; specs pin
+  `watergo-lang=en` for stable text assertions.
+
+Adding a language: drop a `locales/<lng>.json` with the same keys, add the code to
+`SUPPORTED_LANGUAGES` (and `RTL_LANGUAGES` if it's RTL) in `src/i18n/index.ts`.
+
+## 17. Deferred
 
 See [`follow-ups.md`](./follow-ups.md): the dispatcher "suggest a route" button
 (§12 `ST_ClusterDBSCAN` clustering + nearest-neighbour ordering, draft-only), the depot

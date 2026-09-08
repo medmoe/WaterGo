@@ -1,0 +1,209 @@
+{
+  "lang": {
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية",
+    "label": "Language"
+  },
+  "common": {
+    "appName": "Batna Water",
+    "region": "Wilaya of Batna",
+    "cashOnDelivery": "cash on delivery",
+    "liters": "liters",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "add": "Add",
+    "na": "N/A",
+    "actions": "Actions",
+    "backHome": "Back to home"
+  },
+  "nav": {
+    "dispatch": "Dispatch",
+    "driver": "My route",
+    "admin": "Users",
+    "reports": "Cash",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "status": {
+    "pending": "Received",
+    "confirmed": "Confirmed by phone",
+    "assigned": "Scheduled on a route",
+    "en_route": "On the way",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+  "roles": {
+    "customer": "Customer",
+    "dispatcher": "Dispatcher",
+    "driver": "Driver",
+    "admin": "Admin"
+  },
+  "order": {
+    "title": "Order a water delivery",
+    "subtitle": "Wilaya of Batna · cash on delivery",
+    "whereTitle": "Where to deliver?",
+    "pinHint": "Tap the map to drop a pin.",
+    "pinSet": "Selected point: {{lat}}, {{lng}}",
+    "landmark": "Landmark",
+    "landmarkPh": "near the El Atik mosque",
+    "commune": "Commune",
+    "communePh": "Batna",
+    "orderTitle": "Your order",
+    "quantity": "Quantity (liters) — max {{max}}",
+    "phone": "Phone number",
+    "phonePh": "+2135XXXXXXXX",
+    "priceLine": "{{price}} DZD / liter",
+    "totalLine": "Total {{total}} DZD",
+    "submit": "Place the order",
+    "error": "Could not submit the order. Check the fields and try again.",
+    "staffArea": "Team area"
+  },
+  "track": {
+    "title": "Order tracking",
+    "ref": "Ref. {{ref}}",
+    "confirmNumberTitle": "Confirm your number",
+    "phoneLabel": "Phone used for the order",
+    "error": "Wrong number or order not found.",
+    "newOrder": "New order",
+    "cashNote": "{{liters}} L · {{total}} DZD to pay in cash",
+    "cancelledLine": "{{label}} — {{reason}}"
+  },
+  "review": {
+    "title": "Rate your delivery",
+    "subtitle": "How did your order go?",
+    "stars": "{{n}} stars",
+    "commentPh": "A comment (optional)",
+    "error": "This link is no longer valid or a review has already been sent.",
+    "chooseRating": "Choose a rating",
+    "submit": "Submit",
+    "thanks": "Thank you!",
+    "thanksSub": "Your review has been recorded."
+  },
+  "login": {
+    "title": "Sign in",
+    "subDefault": "We'll text you a one-time code",
+    "subSent": "Enter the code sent to {{phone}}",
+    "phone": "Phone number",
+    "phonePh": "+2135XXXXXXXX",
+    "sendCode": "Send code",
+    "code": "Verification code",
+    "codePh": "123456",
+    "verify": "Verify",
+    "useOther": "Use a different number"
+  },
+  "dispatch": {
+    "title": "Dispatch board",
+    "tabConfirm": "To confirm ({{count}})",
+    "tabBuild": "Map & routes",
+    "tabRoutes": "Routes",
+    "tabFleet": "Fleet",
+    "noPending": "No pending orders.",
+    "confirm": "Confirm",
+    "newRoute": "New route ({{count}} stops)",
+    "noConfirmed": "No confirmed orders without a route.",
+    "truck": "Truck",
+    "driver": "Driver",
+    "date": "Date",
+    "create": "Create the route",
+    "createError": "Could not create the route (check the driver and the orders).",
+    "routeSummary": "{{date}} · {{count}} stops · {{status}}",
+    "start": "Start",
+    "finish": "Finish",
+    "plate": "Plate",
+    "capacity": "Capacity (L)",
+    "confirmMeta": "{{liters}} L · {{landmark}} · {{commune}}",
+    "listMeta": "{{phone}} · {{liters}} L · {{commune}}"
+  },
+  "driver": {
+    "title": "My route",
+    "noneToday": "No route for today.",
+    "header": "{{date}} · {{status}} · {{count}} stops",
+    "waiting": "Waiting for dispatch to start the route.",
+    "stop": "Stop {{n}}",
+    "delivered": "delivered",
+    "toDeliver": "to deliver",
+    "paidTag": "paid",
+    "markDelivered": "Mark delivered",
+    "collectCash": "Cash collected",
+    "stopMeta": "{{phone}} · {{liters}} L · {{total}} DZD"
+  },
+  "reports": {
+    "title": "Cash reconciliation",
+    "subtitle": "Expected vs collected cash per driver, delivered stops.",
+    "date": "Date",
+    "totals": "Total expected {{expected}} DZD · collected {{collected}} DZD",
+    "driver": "Driver",
+    "deliveredStops": "Delivered stops",
+    "expected": "Expected (DZD)",
+    "collectedCount": "Collected",
+    "collected": "Collected (DZD)",
+    "none": "No deliveries on that day."
+  },
+  "settings": {
+    "title": "Account settings",
+    "subtitle": "Manage your account settings and preferences",
+    "tabProfile": "My profile",
+    "tabDanger": "Danger zone",
+    "userInfo": "Personal information",
+    "fullName": "Full name",
+    "phone": "Phone number",
+    "deleteAccountTitle": "Delete account",
+    "deleteAccountDesc": "Permanently delete your account and all associated data.",
+    "updated": "Profile updated",
+    "accountDeleted": "Your account has been deleted",
+    "confirmTitle": "Confirmation required",
+    "confirmDesc": "This will permanently delete your account. Click “Confirm” to proceed. This action cannot be undone.",
+    "confirm": "Confirm"
+  },
+  "admin": {
+    "title": "Users",
+    "subtitle": "Manage user accounts and permissions",
+    "addUser": "Add user",
+    "addUserDesc": "Create a dispatcher, driver or admin account.",
+    "editUser": "Edit user",
+    "editUserDesc": "Update the details below.",
+    "deleteUser": "Delete user",
+    "deleteUserConfirm": "This user will be permanently deleted. Are you sure? This action cannot be undone.",
+    "phone": "Phone number",
+    "fullName": "Full name",
+    "role": "Role",
+    "isActive": "Active?",
+    "colRole": "Role",
+    "colStatus": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "you": "You",
+    "created": "User created",
+    "updated": "User updated",
+    "deleted": "User deleted",
+    "colFullName": "Full name",
+    "colPhone": "Phone",
+    "fullNamePh": "Full name",
+    "userDeleted": "User deleted"
+  },
+  "appearance": {
+    "label": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "message": "The page you are looking for does not exist."
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "message": "Something went wrong. Please try again later."
+  },
+  "routeStatus": {
+    "planned": "planned",
+    "in_progress": "in progress",
+    "completed": "completed"
+  },
+  "form": {
+    "phoneRequired": "Phone number is required",
+    "phoneFormat": "International format, e.g. +2135XXXXXXXX"
+  }
+}

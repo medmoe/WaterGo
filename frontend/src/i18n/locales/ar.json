@@ -1,0 +1,209 @@
+{
+  "lang": {
+    "fr": "Français",
+    "en": "English",
+    "ar": "العربية",
+    "label": "اللغة"
+  },
+  "common": {
+    "appName": "مياه باتنة",
+    "region": "ولاية باتنة",
+    "cashOnDelivery": "الدفع نقداً عند التسليم",
+    "liters": "لتر",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "na": "غير متوفر",
+    "actions": "إجراءات",
+    "backHome": "العودة إلى الرئيسية"
+  },
+  "nav": {
+    "dispatch": "التوزيع",
+    "driver": "جولتي",
+    "admin": "المستخدمون",
+    "reports": "الصندوق",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج"
+  },
+  "status": {
+    "pending": "مُستلمة",
+    "confirmed": "مؤكَّدة عبر الهاتف",
+    "assigned": "مُبرمَجة ضمن جولة",
+    "en_route": "في الطريق",
+    "delivered": "تم التسليم",
+    "cancelled": "ملغاة"
+  },
+  "roles": {
+    "customer": "زبون",
+    "dispatcher": "موزِّع",
+    "driver": "سائق",
+    "admin": "مدير"
+  },
+  "order": {
+    "title": "اطلب توصيل ماء",
+    "subtitle": "ولاية باتنة · الدفع نقداً عند التسليم",
+    "whereTitle": "أين يتم التوصيل؟",
+    "pinHint": "انقر على الخريطة لتحديد الموقع.",
+    "pinSet": "الموقع المحدَّد: {{lat}}، {{lng}}",
+    "landmark": "علامة مميّزة",
+    "landmarkPh": "قرب مسجد العتيق",
+    "commune": "البلدية",
+    "communePh": "باتنة",
+    "orderTitle": "طلبك",
+    "quantity": "الكمية (لتر) — الحد الأقصى {{max}}",
+    "phone": "رقم الهاتف",
+    "phonePh": "+2135XXXXXXXX",
+    "priceLine": "{{price}} دج / لتر",
+    "totalLine": "المجموع {{total}} دج",
+    "submit": "إرسال الطلب",
+    "error": "تعذّر إرسال الطلب. تحقّق من الحقول وأعد المحاولة.",
+    "staffArea": "فضاء الفريق"
+  },
+  "track": {
+    "title": "تتبّع الطلب",
+    "ref": "المرجع {{ref}}",
+    "confirmNumberTitle": "أكّد رقمك",
+    "phoneLabel": "الهاتف المستعمل عند الطلب",
+    "error": "رقم غير صحيح أو الطلب غير موجود.",
+    "newOrder": "طلب جديد",
+    "cashNote": "{{liters}} لتر · {{total}} دج تُدفع نقداً",
+    "cancelledLine": "{{label}} — {{reason}}"
+  },
+  "review": {
+    "title": "قيّم عملية التوصيل",
+    "subtitle": "كيف جرى طلبك؟",
+    "stars": "{{n}} نجوم",
+    "commentPh": "تعليق (اختياري)",
+    "error": "هذا الرابط لم يعد صالحاً أو تم إرسال تقييم مسبقاً.",
+    "chooseRating": "اختر تقييماً",
+    "submit": "إرسال",
+    "thanks": "شكراً لك!",
+    "thanksSub": "تم تسجيل تقييمك بنجاح."
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "subDefault": "سنرسل لك رمزاً عبر رسالة نصية",
+    "subSent": "أدخل الرمز المُرسَل إلى {{phone}}",
+    "phone": "رقم الهاتف",
+    "phonePh": "+2135XXXXXXXX",
+    "sendCode": "إرسال الرمز",
+    "code": "رمز التحقّق",
+    "codePh": "123456",
+    "verify": "تحقّق",
+    "useOther": "استخدام رقم آخر"
+  },
+  "dispatch": {
+    "title": "لوحة التوزيع",
+    "tabConfirm": "بانتظار التأكيد ({{count}})",
+    "tabBuild": "الخريطة والجولات",
+    "tabRoutes": "الجولات",
+    "tabFleet": "الأسطول",
+    "noPending": "لا توجد طلبات قيد الانتظار.",
+    "confirm": "تأكيد",
+    "newRoute": "جولة جديدة ({{count}} محطات)",
+    "noConfirmed": "لا توجد طلبات مؤكَّدة بدون جولة.",
+    "truck": "الشاحنة",
+    "driver": "السائق",
+    "date": "التاريخ",
+    "create": "إنشاء الجولة",
+    "createError": "تعذّر إنشاء الجولة (تحقّق من السائق ومن الطلبات).",
+    "routeSummary": "{{date}} · {{count}} محطات · {{status}}",
+    "start": "بدء",
+    "finish": "إنهاء",
+    "plate": "لوحة الترقيم",
+    "capacity": "السعة (لتر)",
+    "confirmMeta": "{{liters}} لتر · {{landmark}} · {{commune}}",
+    "listMeta": "{{phone}} · {{liters}} لتر · {{commune}}"
+  },
+  "driver": {
+    "title": "جولتي",
+    "noneToday": "لا توجد جولة لليوم.",
+    "header": "{{date}} · {{status}} · {{count}} محطات",
+    "waiting": "بانتظار بدء الجولة من طرف التوزيع.",
+    "stop": "المحطة {{n}}",
+    "delivered": "تم التسليم",
+    "toDeliver": "بانتظار التسليم",
+    "paidTag": "مدفوع",
+    "markDelivered": "تحديد كمُسلَّم",
+    "collectCash": "تم تحصيل النقد",
+    "stopMeta": "{{phone}} · {{liters}} لتر · {{total}} دج"
+  },
+  "reports": {
+    "title": "مطابقة الصندوق",
+    "subtitle": "النقد المتوقَّع مقابل المُحصَّل لكل سائق، المحطات المُسلَّمة.",
+    "date": "التاريخ",
+    "totals": "إجمالي المتوقَّع {{expected}} دج · المُحصَّل {{collected}} دج",
+    "driver": "السائق",
+    "deliveredStops": "محطات مُسلَّمة",
+    "expected": "المتوقَّع (دج)",
+    "collectedCount": "المُحصَّلة",
+    "collected": "المُحصَّل (دج)",
+    "none": "لا توجد عمليات تسليم في ذلك اليوم."
+  },
+  "settings": {
+    "title": "إعدادات الحساب",
+    "subtitle": "إدارة إعدادات حسابك وتفضيلاتك",
+    "tabProfile": "ملفي الشخصي",
+    "tabDanger": "منطقة الخطر",
+    "userInfo": "المعلومات الشخصية",
+    "fullName": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "deleteAccountTitle": "حذف الحساب",
+    "deleteAccountDesc": "حذف حسابك وكل البيانات المرتبطة به نهائياً.",
+    "updated": "تم تحديث الملف الشخصي",
+    "accountDeleted": "تم حذف حسابك",
+    "confirmTitle": "تأكيد مطلوب",
+    "confirmDesc": "سيؤدي هذا إلى حذف حسابك نهائياً. انقر على «تأكيد» للمتابعة. لا يمكن التراجع عن هذا الإجراء.",
+    "confirm": "تأكيد"
+  },
+  "admin": {
+    "title": "المستخدمون",
+    "subtitle": "إدارة الحسابات والصلاحيات",
+    "addUser": "إضافة مستخدم",
+    "addUserDesc": "إنشاء حساب موزِّع أو سائق أو مدير.",
+    "editUser": "تعديل المستخدم",
+    "editUserDesc": "حدِّث المعلومات أدناه.",
+    "deleteUser": "حذف المستخدم",
+    "deleteUserConfirm": "سيتم حذف هذا المستخدم نهائياً. هل أنت متأكد؟ لا يمكن التراجع عن هذا الإجراء.",
+    "phone": "رقم الهاتف",
+    "fullName": "الاسم الكامل",
+    "role": "الدور",
+    "isActive": "نشط؟",
+    "colRole": "الدور",
+    "colStatus": "الحالة",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "you": "أنت",
+    "created": "تم إنشاء المستخدم",
+    "updated": "تم تحديث المستخدم",
+    "deleted": "تم حذف المستخدم",
+    "colFullName": "الاسم الكامل",
+    "colPhone": "الهاتف",
+    "fullNamePh": "الاسم الكامل",
+    "userDeleted": "تم حذف المستخدم"
+  },
+  "appearance": {
+    "label": "المظهر",
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "message": "الصفحة التي تبحث عنها غير موجودة."
+  },
+  "errorPage": {
+    "title": "حدث خطأ",
+    "message": "حدث خطأ ما. يُرجى المحاولة لاحقاً."
+  },
+  "routeStatus": {
+    "planned": "مبرمجة",
+    "in_progress": "قيد التنفيذ",
+    "completed": "منتهية"
+  },
+  "form": {
+    "phoneRequired": "رقم الهاتف مطلوب",
+    "phoneFormat": "صيغة دولية، مثل +2135XXXXXXXX"
+  }
+}

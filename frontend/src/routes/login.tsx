@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { AuthLayout } from "@/components/Common/AuthLayout"
@@ -24,25 +25,21 @@ export const Route = createFileRoute("/login")({
       throw redirect({ to: "/" })
     }
   },
-  head: () => ({
-    meta: [{ title: "Sign in" }],
-  }),
 })
 
 const phoneSchema = z.object({
   phone_number: z
     .string()
-    .min(1, { message: "Phone number is required" })
-    .regex(/^\+?[0-9]{6,20}$/, {
-      message: "Use international format, e.g. +2135XXXXXXXX",
-    }),
+    .min(1)
+    .regex(/^\+?[0-9]{6,20}$/),
 })
 
 const codeSchema = z.object({
-  code: z.string().min(4, { message: "Enter the code you received" }).max(8),
+  code: z.string().min(4).max(8),
 })
 
 function Login() {
+  const { t } = useTranslation()
   const { requestOtpMutation, verifyOtpMutation } = useAuth()
   const [phone, setPhone] = useState<string | null>(null)
 
@@ -74,11 +71,9 @@ function Login() {
   return (
     <AuthLayout>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Sign in</h1>
+        <h1 className="text-2xl font-bold">{t("login.title")}</h1>
         <p className="text-sm text-muted-foreground">
-          {phone
-            ? `Enter the code sent to ${phone}`
-            : "We'll text you a one-time code"}
+          {phone ? t("login.subSent", { phone }) : t("login.subDefault")}
         </p>
       </div>
 
@@ -90,11 +85,11 @@ function Login() {
               name="phone_number"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone number</FormLabel>
+                  <FormLabel>{t("login.phone")}</FormLabel>
                   <FormControl>
                     <Input
                       data-testid="phone-input"
-                      placeholder="+2135XXXXXXXX"
+                      placeholder={t("login.phonePh")}
                       type="tel"
                       autoComplete="tel"
                       {...field}
@@ -105,7 +100,7 @@ function Login() {
               )}
             />
             <LoadingButton type="submit" loading={requestOtpMutation.isPending}>
-              Send code
+              {t("login.sendCode")}
             </LoadingButton>
           </form>
         </Form>
@@ -117,11 +112,11 @@ function Login() {
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Verification code</FormLabel>
+                  <FormLabel>{t("login.code")}</FormLabel>
                   <FormControl>
                     <Input
                       data-testid="code-input"
-                      placeholder="123456"
+                      placeholder={t("login.codePh")}
                       inputMode="numeric"
                       autoComplete="one-time-code"
                       {...field}
@@ -132,7 +127,7 @@ function Login() {
               )}
             />
             <LoadingButton type="submit" loading={verifyOtpMutation.isPending}>
-              Verify
+              {t("login.verify")}
             </LoadingButton>
             <button
               type="button"
@@ -142,7 +137,7 @@ function Login() {
                 codeForm.reset()
               }}
             >
-              Use a different number
+              {t("login.useOther")}
             </button>
           </form>
         </Form>

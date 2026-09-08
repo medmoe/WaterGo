@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { ReportsService, UsersService } from "@/client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { fmtNumber } from "@/lib/format"
 
 export const Route = createFileRoute("/_layout/reports")({
   component: Reports,
@@ -21,10 +23,10 @@ export const Route = createFileRoute("/_layout/reports")({
     const { data: me } = await UsersService.readUserMe()
     if (me.role !== "admin") throw redirect({ to: "/" })
   },
-  head: () => ({ meta: [{ title: "Rapprochement caisse" }] }),
 })
 
 function Reports() {
+  const { t } = useTranslation()
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
   const { data } = useQuery({
     queryKey: ["report", "cash", date],
@@ -36,15 +38,13 @@ function Reports() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          Rapprochement de caisse
+          {t("reports.title")}
         </h1>
-        <p className="text-muted-foreground">
-          Cash attendu vs encaissé par chauffeur, arrêts livrés.
-        </p>
+        <p className="text-muted-foreground">{t("reports.subtitle")}</p>
       </div>
 
       <div className="grid w-48 gap-1">
-        <Label>Date</Label>
+        <Label>{t("reports.date")}</Label>
         <Input
           type="date"
           value={date}
@@ -55,21 +55,21 @@ function Reports() {
       <Card>
         <CardHeader>
           <CardTitle>
-            Total attendu{" "}
-            {Number(data?.total_expected_dzd ?? 0).toLocaleString()} DZD ·
-            encaissé {Number(data?.total_collected_dzd ?? 0).toLocaleString()}{" "}
-            DZD
+            {t("reports.totals", {
+              expected: fmtNumber(Number(data?.total_expected_dzd ?? 0)),
+              collected: fmtNumber(Number(data?.total_collected_dzd ?? 0)),
+            })}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Chauffeur</TableHead>
-                <TableHead>Arrêts livrés</TableHead>
-                <TableHead>Attendu (DZD)</TableHead>
-                <TableHead>Encaissés</TableHead>
-                <TableHead>Encaissé (DZD)</TableHead>
+                <TableHead>{t("reports.driver")}</TableHead>
+                <TableHead>{t("reports.deliveredStops")}</TableHead>
+                <TableHead>{t("reports.expected")}</TableHead>
+                <TableHead>{t("reports.collectedCount")}</TableHead>
+                <TableHead>{t("reports.collected")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -78,18 +78,18 @@ function Reports() {
                   <TableCell>{r.driver_name || r.driver_phone}</TableCell>
                   <TableCell>{r.delivered_stops}</TableCell>
                   <TableCell>
-                    {Number(r.expected_cash_dzd).toLocaleString()}
+                    {fmtNumber(Number(r.expected_cash_dzd))}
                   </TableCell>
                   <TableCell>{r.collected_stops}</TableCell>
                   <TableCell>
-                    {Number(r.collected_cash_dzd).toLocaleString()}
+                    {fmtNumber(Number(r.collected_cash_dzd))}
                   </TableCell>
                 </TableRow>
               ))}
               {data?.rows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-muted-foreground">
-                    Aucune livraison ce jour-là.
+                    {t("reports.none")}
                   </TableCell>
                 </TableRow>
               )}

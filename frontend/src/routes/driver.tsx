@@ -1,12 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { useCallback } from "react"
+import { useTranslation } from "react-i18next"
 
 import { DriverService, UsersService } from "@/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { isLoggedIn } from "@/hooks/useAuth"
 import { useLiveChannel } from "@/hooks/useLiveChannel"
+import { fmtNumber } from "@/lib/format"
 
 export const Route = createFileRoute("/driver")({
   component: Driver,
@@ -18,10 +20,10 @@ export const Route = createFileRoute("/driver")({
     }
     return { driverId: me.id }
   },
-  head: () => ({ meta: [{ title: "Ma tournée" }] }),
 })
 
 function Driver() {
+  const { t } = useTranslation()
   const { driverId } = Route.useRouteContext()
   const qc = useQueryClient()
   const refresh = useCallback(() => {
@@ -53,9 +55,9 @@ function Driver() {
   if (!route) {
     return (
       <div className="mx-auto max-w-md p-6">
-        <h1 className="text-2xl font-bold">Ma tournée</h1>
+        <h1 className="text-2xl font-bold">{t("driver.title")}</h1>
         <p className="text-muted-foreground mt-2 text-sm">
-          Aucune tournée pour aujourd'hui.
+          {t("driver.noneToday")}
         </p>
       </div>
     )
@@ -64,33 +66,39 @@ function Driver() {
   return (
     <div className="mx-auto max-w-md p-4 md:p-6 flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-bold">Ma tournée</h1>
+        <h1 className="text-2xl font-bold">{t("driver.title")}</h1>
         <p className="text-muted-foreground text-sm">
-          {route.planned_date} · {route.status} · {(route.stops ?? []).length}{" "}
-          arrêts
+          {t("driver.header", {
+            date: route.planned_date,
+            status: t(`routeStatus.${route.status}`, route.status),
+            count: (route.stops ?? []).length,
+          })}
         </p>
       </div>
       {route.status === "planned" && (
-        <p className="rounded-md bg-muted p-3 text-sm">
-          En attente du démarrage par le dispatch.
-        </p>
+        <p className="rounded-md bg-muted p-3 text-sm">{t("driver.waiting")}</p>
       )}
       {(route.stops ?? []).map((s, i) => (
         <Card key={s.id}>
           <CardContent className="flex flex-col gap-2 py-4">
             <div className="flex items-baseline justify-between">
-              <span className="font-semibold">Arrêt {i + 1}</span>
+              <span className="font-semibold">
+                {t("driver.stop", { n: i + 1 })}
+              </span>
               <span className="text-xs text-muted-foreground">
-                {s.delivered_at ? "livré" : "à livrer"}
-                {s.payment_collected ? " · payé" : ""}
+                {s.delivered_at ? t("driver.delivered") : t("driver.toDeliver")}
+                {s.payment_collected ? ` · ${t("driver.paidTag")}` : ""}
               </span>
             </div>
             <div className="text-sm">
               {s.order?.location?.landmark_text} — {s.order?.location?.commune}
             </div>
             <div className="text-sm text-muted-foreground">
-              {s.order?.customer_phone} · {s.order?.quantity_liters} L ·{" "}
-              {Number(s.order?.total_price_dzd ?? 0).toLocaleString()} DZD
+              {t("driver.stopMeta", {
+                phone: s.order?.customer_phone ?? "",
+                liters: s.order?.quantity_liters ?? 0,
+                total: fmtNumber(Number(s.order?.total_price_dzd ?? 0)),
+              })}
             </div>
             <div className="mt-1 flex gap-2">
               <Button
@@ -98,7 +106,7 @@ function Driver() {
                 disabled={!!s.delivered_at || delivered.isPending}
                 onClick={() => delivered.mutate(s.id)}
               >
-                Marquer livré
+                {t("driver.markDelivered")}
               </Button>
               <Button
                 size="sm"
@@ -108,7 +116,7 @@ function Driver() {
                 }
                 onClick={() => paid.mutate(s.id)}
               >
-                Cash encaissé
+                {t("driver.collectCash")}
               </Button>
             </div>
           </CardContent>

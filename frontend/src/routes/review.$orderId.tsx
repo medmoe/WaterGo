@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
 import { Star } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import { ReviewsService } from "@/client"
 import { AuthLayout } from "@/components/Common/AuthLayout"
@@ -17,10 +18,10 @@ export const Route = createFileRoute("/review/$orderId")({
   validateSearch: (search: Record<string, unknown>): ReviewSearch => ({
     token: typeof search.token === "string" ? search.token : undefined,
   }),
-  head: () => ({ meta: [{ title: "Rate your delivery" }] }),
 })
 
 function ReviewPage() {
+  const { t } = useTranslation()
   const { orderId } = Route.useParams()
   const { token } = Route.useSearch()
   const [rating, setRating] = useState(0)
@@ -37,9 +38,9 @@ function ReviewPage() {
     return (
       <AuthLayout>
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Merci !</h1>
+          <h1 className="text-2xl font-bold">{t("review.thanks")}</h1>
           <p className="text-sm text-muted-foreground">
-            Votre avis a bien été enregistré.
+            {t("review.thanksSub")}
           </p>
         </div>
       </AuthLayout>
@@ -56,9 +57,9 @@ function ReviewPage() {
         }}
       >
         <div className="text-center">
-          <h1 className="text-2xl font-bold">Notez votre livraison</h1>
+          <h1 className="text-2xl font-bold">{t("review.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            Comment s'est passée votre commande ?
+            {t("review.subtitle")}
           </p>
         </div>
 
@@ -67,7 +68,7 @@ function ReviewPage() {
             <button
               key={n}
               type="button"
-              aria-label={`${n} étoiles`}
+              aria-label={t("review.stars", { n })}
               onClick={() => setRating(n)}
             >
               <Star
@@ -83,24 +84,24 @@ function ReviewPage() {
         </div>
 
         <Input
-          placeholder="Un commentaire (facultatif)"
+          placeholder={t("review.commentPh")}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
         />
 
         {mutation.isError && (
           <p className="text-sm text-destructive text-center">
-            Ce lien n'est plus valide ou l'avis a déjà été envoyé.
+            {t("review.error")}
           </p>
         )}
 
         {rating >= 1 ? (
           <LoadingButton type="submit" loading={mutation.isPending}>
-            Envoyer
+            {t("review.submit")}
           </LoadingButton>
         ) : (
           <Button type="submit" disabled>
-            Choisissez une note
+            {t("review.chooseRating")}
           </Button>
         )}
       </form>

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Pencil } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { type UserPublic, type UserRole, UsersService } from "@/client"
@@ -43,10 +44,8 @@ const ROLES: UserRole[] = ["customer", "dispatcher", "driver", "admin"]
 const formSchema = z.object({
   phone_number: z
     .string()
-    .min(1, { message: "Phone number is required" })
-    .regex(/^\+?[0-9]{6,20}$/, {
-      message: "Use E.164 format, e.g. +2135XXXXXXXX",
-    }),
+    .min(1)
+    .regex(/^\+?[0-9]{6,20}$/),
   full_name: z.string().optional(),
   role: z.enum(["customer", "dispatcher", "driver", "admin"]),
   is_active: z.boolean(),
@@ -60,6 +59,7 @@ interface EditUserProps {
 }
 
 const EditUser = ({ user, onSuccess }: EditUserProps) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const queryClient = useQueryClient()
   const { showSuccessToast, showErrorToast } = useCustomToast()
@@ -80,7 +80,7 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
     mutationFn: (data: FormData) =>
       UsersService.updateUser({ path: { user_id: user.id }, body: data }),
     onSuccess: () => {
-      showSuccessToast("User updated successfully")
+      showSuccessToast(t("admin.updated"))
       setIsOpen(false)
       onSuccess()
     },
@@ -101,16 +101,14 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
         onClick={() => setIsOpen(true)}
       >
         <Pencil />
-        Edit User
+        {t("admin.editUser")}
       </DropdownMenuItem>
       <DialogContent className="sm:max-w-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Edit User</DialogTitle>
-              <DialogDescription>
-                Update the user details below.
-              </DialogDescription>
+              <DialogTitle>{t("admin.editUser")}</DialogTitle>
+              <DialogDescription>{t("admin.editUserDesc")}</DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <FormField
@@ -119,11 +117,12 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Phone number <span className="text-destructive">*</span>
+                      {t("admin.phone")}{" "}
+                      <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="+2135XXXXXXXX"
+                        placeholder={t("order.phonePh")}
                         type="tel"
                         {...field}
                       />
@@ -138,9 +137,13 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
                 name="full_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t("admin.fullName")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Full name" type="text" {...field} />
+                      <Input
+                        placeholder={t("admin.fullNamePh")}
+                        type="text"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -152,7 +155,7 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
                 name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role</FormLabel>
+                    <FormLabel>{t("admin.role")}</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -165,7 +168,7 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
                       <SelectContent>
                         {ROLES.map((role) => (
                           <SelectItem key={role} value={role}>
-                            {role}
+                            {t(`roles.${role}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -186,7 +189,9 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
                         onCheckedChange={field.onChange}
                       />
                     </FormControl>
-                    <FormLabel className="font-normal">Is active?</FormLabel>
+                    <FormLabel className="font-normal">
+                      {t("admin.isActive")}
+                    </FormLabel>
                   </FormItem>
                 )}
               />
@@ -195,11 +200,11 @@ const EditUser = ({ user, onSuccess }: EditUserProps) => {
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline" disabled={mutation.isPending}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </DialogClose>
               <LoadingButton type="submit" loading={mutation.isPending}>
-                Save
+                {t("common.save")}
               </LoadingButton>
             </DialogFooter>
           </form>

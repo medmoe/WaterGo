@@ -11,6 +11,7 @@ import ReactDOM from "react-dom/client"
 import { client } from "./client/client.gen"
 import { ThemeProvider } from "./components/theme-provider"
 import { Toaster } from "./components/ui/sonner"
+import "./i18n"
 import "./index.css"
 import { routeTree } from "./routeTree.gen"
 

@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 
 const ErrorComponent = () => {
+  const { t } = useTranslation()
   return (
     <div
       className="flex min-h-screen items-center justify-center flex-col p-4"
@@ -17,10 +19,10 @@ const ErrorComponent = () => {
       </div>
 
       <p className="text-lg text-muted-foreground mb-4 text-center z-10">
-        Something went wrong. Please try again.
+        {t("errorPage.message")}
       </p>
       <Link to="/">
-        <Button>Go Home</Button>
+        <Button>{t("common.backHome")}</Button>
       </Link>
     </div>
   )

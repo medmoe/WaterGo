@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { useCallback, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import {
   DispatchService,
@@ -27,10 +28,10 @@ export const Route = createFileRoute("/dispatch")({
       throw redirect({ to: "/" })
     }
   },
-  head: () => ({ meta: [{ title: "Dispatch" }] }),
 })
 
 function Dispatch() {
+  const { t } = useTranslation()
   const qc = useQueryClient()
   const invalidateAll = useCallback(() => {
     qc.invalidateQueries()
@@ -110,19 +111,20 @@ function Dispatch() {
   const driverList = (drivers.data?.data ?? []).filter(
     (u) => u.role === "driver",
   )
+  const L = t("common.liters")
 
   return (
     <div className="mx-auto max-w-6xl p-4 md:p-8 flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Tableau de dispatch</h1>
+      <h1 className="text-2xl font-bold">{t("dispatch.title")}</h1>
 
       <Tabs defaultValue="confirm">
         <TabsList>
           <TabsTrigger value="confirm">
-            À confirmer ({pending.data?.count ?? 0})
+            {t("dispatch.tabConfirm", { count: pending.data?.count ?? 0 })}
           </TabsTrigger>
-          <TabsTrigger value="build">Carte &amp; tournées</TabsTrigger>
-          <TabsTrigger value="routes">Tournées</TabsTrigger>
-          <TabsTrigger value="fleet">Flotte</TabsTrigger>
+          <TabsTrigger value="build">{t("dispatch.tabBuild")}</TabsTrigger>
+          <TabsTrigger value="routes">{t("dispatch.tabRoutes")}</TabsTrigger>
+          <TabsTrigger value="fleet">{t("dispatch.tabFleet")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="confirm" className="flex flex-col gap-3">
@@ -132,8 +134,11 @@ function Dispatch() {
                 <div className="text-sm">
                   <div className="font-medium">{o.customer_phone}</div>
                   <div className="text-muted-foreground">
-                    {o.quantity_liters} L · {o.location?.landmark_text} ·{" "}
-                    {o.location?.commune}
+                    {t("dispatch.confirmMeta", {
+                      liters: o.quantity_liters,
+                      landmark: o.location?.landmark_text ?? "",
+                      commune: o.location?.commune ?? "",
+                    })}
                   </div>
                 </div>
                 <Button
@@ -141,14 +146,14 @@ function Dispatch() {
                   disabled={confirm.isPending}
                   onClick={() => confirm.mutate(o.id)}
                 >
-                  Confirmer
+                  {t("dispatch.confirm")}
                 </Button>
               </CardContent>
             </Card>
           ))}
           {pending.data?.count === 0 && (
             <p className="text-muted-foreground text-sm">
-              Aucune commande en attente.
+              {t("dispatch.noPending")}
             </p>
           )}
         </TabsContent>
@@ -160,13 +165,15 @@ function Dispatch() {
               id: p.order_id,
               lat: p.raw_lat,
               lng: p.raw_lng,
-              label: `${p.customer_phone} — ${p.quantity_liters} L`,
+              label: `${p.customer_phone} — ${p.quantity_liters} ${L}`,
               onClick: () => toggle(p.order_id),
             }))}
           />
           <Card>
             <CardHeader>
-              <CardTitle>Nouvelle tournée ({selected.size} arrêts)</CardTitle>
+              <CardTitle>
+                {t("dispatch.newRoute", { count: selected.size })}
+              </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-3">
               <div className="max-h-48 overflow-auto flex flex-col gap-2">
@@ -181,19 +188,23 @@ function Dispatch() {
                       onCheckedChange={() => toggle(p.order_id)}
                     />
                     <label htmlFor={`stop-${p.order_id}`}>
-                      {p.customer_phone} · {p.quantity_liters} L · {p.commune}
+                      {t("dispatch.listMeta", {
+                        phone: p.customer_phone,
+                        liters: p.quantity_liters,
+                        commune: p.commune,
+                      })}
                     </label>
                   </div>
                 ))}
                 {map.data?.length === 0 && (
                   <p className="text-muted-foreground text-sm">
-                    Aucune commande confirmée sans tournée.
+                    {t("dispatch.noConfirmed")}
                   </p>
                 )}
               </div>
               <div className="grid gap-2 sm:grid-cols-3">
                 <div className="grid gap-1">
-                  <Label>Camion</Label>
+                  <Label>{t("dispatch.truck")}</Label>
                   <select
                     className="h-9 rounded-md border bg-background px-2 text-sm"
                     value={vehicleId}
@@ -202,13 +213,13 @@ function Dispatch() {
                     <option value="">—</option>
                     {(vehicles.data?.data ?? []).map((v) => (
                       <option key={v.id} value={v.id}>
-                        {v.plate_number} ({v.capacity_liters} L)
+                        {v.plate_number} ({v.capacity_liters} {L})
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className="grid gap-1">
-                  <Label>Chauffeur</Label>
+                  <Label>{t("dispatch.driver")}</Label>
                   <select
                     className="h-9 rounded-md border bg-background px-2 text-sm"
                     value={driverId}
@@ -223,7 +234,7 @@ function Dispatch() {
                   </select>
                 </div>
                 <div className="grid gap-1">
-                  <Label>Date</Label>
+                  <Label>{t("dispatch.date")}</Label>
                   <Input
                     type="date"
                     value={plannedDate}
@@ -233,8 +244,7 @@ function Dispatch() {
               </div>
               {createRoute.isError && (
                 <p className="text-sm text-destructive">
-                  Impossible de créer la tournée (vérifiez le chauffeur et les
-                  commandes).
+                  {t("dispatch.createError")}
                 </p>
               )}
               <Button
@@ -246,7 +256,7 @@ function Dispatch() {
                 }
                 onClick={() => createRoute.mutate()}
               >
-                Créer la tournée
+                {t("dispatch.create")}
               </Button>
             </CardContent>
           </Card>
@@ -258,8 +268,11 @@ function Dispatch() {
               <CardContent className="flex items-center justify-between gap-4 py-4">
                 <div className="text-sm">
                   <div className="font-medium">
-                    {r.planned_date} · {(r.stops ?? []).length} arrêts ·{" "}
-                    {r.status}
+                    {t("dispatch.routeSummary", {
+                      date: r.planned_date,
+                      count: (r.stops ?? []).length,
+                      status: t(`routeStatus.${r.status}`, r.status),
+                    })}
                   </div>
                   <div className="text-muted-foreground">
                     {(r.stops ?? [])
@@ -276,7 +289,7 @@ function Dispatch() {
                         advance.mutate({ id: r.id, status: "in_progress" })
                       }
                     >
-                      Démarrer
+                      {t("dispatch.start")}
                     </Button>
                   )}
                   {r.status === "in_progress" && (
@@ -287,7 +300,7 @@ function Dispatch() {
                         advance.mutate({ id: r.id, status: "completed" })
                       }
                     >
-                      Terminer
+                      {t("dispatch.finish")}
                     </Button>
                   )}
                 </div>
@@ -303,7 +316,7 @@ function Dispatch() {
               <CardContent className="flex items-center justify-between py-4 text-sm">
                 <span className="font-medium">{v.plate_number}</span>
                 <span className="text-muted-foreground">
-                  {v.capacity_liters} L · {v.status} · {v.current_odometer_km}{" "}
+                  {v.capacity_liters} {L} · {v.status} · {v.current_odometer_km}{" "}
                   km
                 </span>
               </CardContent>
@@ -316,6 +329,7 @@ function Dispatch() {
 }
 
 function NewVehicle({ onDone }: { onDone: () => void }) {
+  const { t } = useTranslation()
   const [plate, setPlate] = useState("")
   const [capacity, setCapacity] = useState(3000)
   const m = useMutation({
@@ -332,11 +346,11 @@ function NewVehicle({ onDone }: { onDone: () => void }) {
     <Card>
       <CardContent className="flex flex-wrap items-end gap-3 py-4">
         <div className="grid gap-1">
-          <Label>Plaque</Label>
+          <Label>{t("dispatch.plate")}</Label>
           <Input value={plate} onChange={(e) => setPlate(e.target.value)} />
         </div>
         <div className="grid gap-1">
-          <Label>Capacité (L)</Label>
+          <Label>{t("dispatch.capacity")}</Label>
           <Input
             type="number"
             value={capacity}
@@ -344,7 +358,7 @@ function NewVehicle({ onDone }: { onDone: () => void }) {
           />
         </div>
         <Button disabled={!plate || m.isPending} onClick={() => m.mutate()}>
-          Ajouter
+          {t("common.add")}
         </Button>
       </CardContent>
     </Card>
