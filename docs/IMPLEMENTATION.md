@@ -344,9 +344,17 @@ Before any non-dev deployment change `SECRET_KEY`, `POSTGRES_PASSWORD` and
 docker compose up -d --build
 # proxy, db (PostGIS), redis, backend, worker, adminer  (+ flower in dev)
 
-docker compose exec backend bash backend/scripts/prestart.sh
+docker compose exec backend bash scripts/prestart.sh
 # = alembic upgrade head  +  python app/initial_data.py (seeds the admin)
+# (WORKDIR in the container is /app/backend, so the path is scripts/…, not backend/scripts/…)
 ```
+
+> **`failed to resolve host 'db'`** from `prestart.sh` means the Compose stack is in
+> an inconsistent state — usually the `db` container is running but detached from the
+> project network (a leftover from an interrupted `down`/`up` cycle). Fix:
+> `docker compose down --remove-orphans && docker compose up -d`, then re-run
+> `prestart.sh`. Add `-v` to `down` only if you also want to discard the database
+> volume (dev only).
 
 **Run `prestart.sh` before anyone logs in** — `init_db` only creates the admin if the
 phone is absent; if someone OTP-authenticates with `FIRST_SUPERUSER_PHONE` first they'd
