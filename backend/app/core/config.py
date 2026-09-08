@@ -12,8 +12,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        # Use top level .env file (one level above ./backend/)
-        env_file="../.env",
+        # Top-level .env (one level above ./backend/); ../.env.local overrides it
+        # and is git-ignored - put real secrets (bot tokens, gateway keys) there.
+        env_file=("../.env", "../.env.local"),
         env_ignore_empty=True,
         extra="ignore",
     )
@@ -45,9 +46,22 @@ class Settings(BaseSettings):
     # OTP auth (section 9)
     OTP_EXPIRY_SECONDS: int = 300
 
-    # SMS / WhatsApp provider (section 11) - stubbed until a gateway is chosen.
+    # SMS / WhatsApp provider (section 11). SMS_PROVIDER_* is reserved for the
+    # eventual Infobip/WhatsApp integration.
     SMS_PROVIDER_API_KEY: str | None = None
     SMS_PROVIDER_BASE_URL: str | None = None
+
+    # Interim SMS: a SIM-based Android SMS gateway (see docs/interim-messaging).
+    # When both are set, this takes precedence over SMS_PROVIDER_* and the stub.
+    SMS_GATEWAY_BASE_URL: str | None = None
+    SMS_GATEWAY_API_KEY: str | None = None
+    SMS_GATEWAY_DEVICE_ID: str | None = None
+
+    # Telegram bot for internal-team notifications (dispatcher/driver).
+    TELEGRAM_BOT_TOKEN: str | None = None
+    # Optional: value of the X-Telegram-Bot-Api-Secret-Token header Telegram
+    # sends to the webhook (set when registering the webhook with setWebhook).
+    TELEGRAM_WEBHOOK_SECRET: str | None = None
 
     # Route clustering (section 12) - not wired up yet.
     ROUTE_CLUSTER_DISTANCE_METERS: int = 1500

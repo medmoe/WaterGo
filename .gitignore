@@ -9,3 +9,6 @@ backend/app/frontend/
 
 .idea
 .venv
+
+# local secret overrides (bot tokens, gateway keys)
+.env.local
