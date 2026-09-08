@@ -2,7 +2,7 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool, text
+from sqlalchemy import engine_from_config, pool
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,21 +27,33 @@ from app.core.config import settings # noqa
 target_metadata = SQLModel.metadata
 
 
-# Schemas the PostGIS image's extensions own (postgis_tiger_geocoder, topology).
-# Our migrations only touch `public`.
+# The postgis image installs postgis_tiger_geocoder + topology, whose tables all
+# our migrations must ignore. The connect_args below pin reflection to `public`;
+# this name filter is a backstop (the tiger geocoder tables come with `schema=None`
+# once `tiger` is on the search_path, so filtering by schema alone isn't enough).
 _EXTENSION_SCHEMAS = {"tiger", "tiger_data", "topology"}
+_TIGER_NAMES = {
+    "geocode_settings", "geocode_settings_default", "loader_platform",
+    "loader_variables", "loader_lookuptables", "pagc_gaz", "pagc_lex",
+    "pagc_rules", "topology", "layer", "addr", "addrfeat", "bg", "county",
+    "county_lookup", "countysub_lookup", "cousub", "direction_lookup", "edges",
+    "faces", "featnames", "place", "place_lookup", "secondary_unit_lookup",
+    "state", "state_lookup", "street_type_lookup", "tabblock", "tabblock20",
+    "tract", "zcta5", "zip_lookup", "zip_lookup_all", "zip_lookup_base",
+    "zip_state", "zip_state_loc",
+}
 
 
 def _include_object(obj, name, type_, reflected, compare_to):
-    # Skip objects owned by PostGIS extension schemas (the tiger geocoder adds
-    # `tiger` to the DB search_path, so reflection would otherwise pick them up).
     schema = getattr(obj, "schema", None) or getattr(
         getattr(obj, "table", None), "schema", None
     )
     if schema in _EXTENSION_SCHEMAS:
         return False
-    # Ignore PostGIS-managed objects in public (spatial_ref_sys, spatial indexes,
-    # the geometry_columns view, ...) so autogenerate / `alembic check` stay clean.
+    if name and (name in _TIGER_NAMES or name.startswith("idx_tiger")):
+        return False
+    # PostGIS-managed objects in public (spatial_ref_sys, spatial indexes,
+    # geometry_columns, ...) so autogenerate / `alembic check` stay clean.
     return alembic_helpers.include_object(obj, name, type_, reflected, compare_to)
 
 # other values from the config, defined by the needs of env.py,
@@ -94,12 +106,13 @@ def run_migrations_online():
         configuration,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
+        # Pin every connection's search_path to `public` at connect time (libpq
+        # option, no transaction) so reflection ignores the tiger/topology
+        # schemas the PostGIS image adds to the DB search_path.
+        connect_args={"options": "-csearch_path=public"},
     )
 
     with connectable.connect() as connection:
-        # The tiger geocoder extension puts `tiger` on the DB search_path;
-        # pin migrations + reflection to `public`.
-        connection.execute(text("SET search_path TO public"))
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
