@@ -592,6 +592,16 @@ export type RoutesPublic = {
 };
 
 /**
+ * TelegramLinkCode
+ */
+export type TelegramLinkCode = {
+    /**
+     * Code
+     */
+    code: string;
+};
+
+/**
  * Token
  */
 export type Token = {
@@ -625,6 +635,45 @@ export type UserCreate = {
 };
 
 /**
+ * UserCreated
+ */
+export type UserCreated = {
+    /**
+     * Phone Number
+     */
+    phone_number: string;
+    /**
+     * Full Name
+     */
+    full_name?: string | null;
+    role?: UserRole;
+    /**
+     * Is Active
+     */
+    is_active?: boolean;
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Created At
+     */
+    created_at: string;
+    /**
+     * Updated At
+     */
+    updated_at: string;
+    /**
+     * Telegram Linked
+     */
+    telegram_linked?: boolean;
+    /**
+     * Telegram Link Code
+     */
+    telegram_link_code?: string | null;
+};
+
+/**
  * UserPublic
  */
 export type UserPublic = {
@@ -653,6 +702,10 @@ export type UserPublic = {
      * Updated At
      */
     updated_at: string;
+    /**
+     * Telegram Linked
+     */
+    telegram_linked?: boolean;
 };
 
 /**
@@ -923,10 +976,40 @@ export type usersCreateUserResponses = {
     /**
      * Successful Response
      */
-    200: UserPublic;
+    200: UserCreated;
 };
 
 export type usersCreateUserResponse = usersCreateUserResponses[keyof usersCreateUserResponses];
+
+export type usersReissueTelegramLinkCodeData = {
+    body?: never;
+    path: {
+        /**
+         * User Id
+         */
+        user_id: string;
+    };
+    query?: never;
+    url: '/api/v1/users/{user_id}/telegram-link-code';
+};
+
+export type usersReissueTelegramLinkCodeErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type usersReissueTelegramLinkCodeError = usersReissueTelegramLinkCodeErrors[keyof usersReissueTelegramLinkCodeErrors];
+
+export type usersReissueTelegramLinkCodeResponses = {
+    /**
+     * Successful Response
+     */
+    200: TelegramLinkCode;
+};
+
+export type usersReissueTelegramLinkCodeResponse = usersReissueTelegramLinkCodeResponses[keyof usersReissueTelegramLinkCodeResponses];
 
 export type usersDeleteUserMeData = {
     body?: never;
@@ -1654,6 +1737,37 @@ export type reviewsCreateReviewResponses = {
 };
 
 export type reviewsCreateReviewResponse = reviewsCreateReviewResponses[keyof reviewsCreateReviewResponses];
+
+export type telegramTelegramWebhookData = {
+    body?: never;
+    headers?: {
+        /**
+         * X-Telegram-Bot-Api-Secret-Token
+         */
+        'x-telegram-bot-api-secret-token'?: string | null;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/v1/telegram/webhook';
+};
+
+export type telegramTelegramWebhookErrors = {
+    /**
+     * Validation Error
+     */
+    422: HTTPValidationError;
+};
+
+export type telegramTelegramWebhookError = telegramTelegramWebhookErrors[keyof telegramTelegramWebhookErrors];
+
+export type telegramTelegramWebhookResponses = {
+    /**
+     * Response Telegram-Telegram Webhook
+     *
+     * Successful Response
+     */
+    200: unknown;
+};
 
 export type utilsHealthCheckData = {
     body?: never;

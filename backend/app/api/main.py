@@ -8,6 +8,7 @@ from app.api.routes import (
     pricing,
     reports,
     reviews,
+    telegram,
     users,
     utils,
     vehicles,
@@ -24,5 +25,6 @@ api_router.include_router(vehicles.router)
 api_router.include_router(pricing.router)
 api_router.include_router(reports.router)
 api_router.include_router(reviews.router)
+api_router.include_router(telegram.router)
 api_router.include_router(ws.router)
 api_router.include_router(utils.router)

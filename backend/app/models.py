@@ -122,8 +122,15 @@ class User(UserBase, TimestampMixin, table=True):
     __tablename__ = "users"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    # Set by the Telegram /link flow; internal-team notifications only.
+    telegram_chat_id: str | None = Field(default=None, max_length=64)
 
     locations: list["Location"] = Relationship(back_populates="user")
+
+    @property
+    def telegram_linked(self) -> bool:
+        return self.telegram_chat_id is not None
+
     orders: list["Order"] = Relationship(
         back_populates="customer",
         sa_relationship_kwargs={"foreign_keys": "Order.customer_id"},
@@ -135,6 +142,17 @@ class UserPublic(UserBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: datetime
+    telegram_linked: bool = False
+
+
+class UserCreated(UserPublic):
+    # One-time code the new dispatcher/driver sends to the Telegram bot as
+    # `/link <code>` (only present on the create response).
+    telegram_link_code: str | None = None
+
+
+class TelegramLinkCode(SQLModel):
+    code: str
 
 
 class UsersPublic(SQLModel):

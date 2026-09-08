@@ -19,10 +19,23 @@ celery_app.conf.task_eager_propagates = False
 
 @pytest.fixture(autouse=True)
 def fake_redis(monkeypatch: pytest.MonkeyPatch) -> fakeredis.FakeRedis:
-    """Back the OTP store with an in-memory Redis for every test."""
+    """Back the Redis-backed stores (OTP codes, Telegram link codes) with an
+    in-memory Redis for every test."""
     fake = fakeredis.FakeRedis(decode_responses=True)
     monkeypatch.setattr("app.services.otp.get_redis", lambda: fake)
+    monkeypatch.setattr("app.services.telegram.get_redis", lambda: fake)
     return fake
+
+
+@pytest.fixture(autouse=True)
+def no_telegram_http(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str, str]]:
+    """Capture telegram.send_message calls instead of hitting the API."""
+    sent: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        "app.services.telegram.send_message",
+        lambda chat_id, text: (sent.append((chat_id, text)), True)[1],
+    )
+    return sent
 
 
 @pytest.fixture(scope="session", autouse=True)

@@ -181,7 +181,11 @@
     "colFullName": "Full name",
     "colPhone": "Phone",
     "fullNamePh": "Full name",
-    "userDeleted": "User deleted"
+    "userDeleted": "User deleted",
+    "addUserBtn": "Add",
+    "done": "Done",
+    "telegramCodeTitle": "Telegram linking code",
+    "telegramCodeHelp": "Give this code to the person. They open the Telegram bot and send: /link {{code}} (valid for 1 h)."
   },
   "appearance": {
     "label": "Appearance",

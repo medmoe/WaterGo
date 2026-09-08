@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, reportsCashReconciliationData, reportsCashReconciliationErrors, reportsCashReconciliationResponses, reviewsCreateReviewData, reviewsCreateReviewErrors, reviewsCreateReviewResponses, reviewsListReviewsData, reviewsListReviewsErrors, reviewsListReviewsResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
+import type { authRequestOtpData, authRequestOtpErrors, authRequestOtpResponses, authVerifyOtpData, authVerifyOtpErrors, authVerifyOtpResponses, dispatchCreateRouteData, dispatchCreateRouteErrors, dispatchCreateRouteResponses, dispatchListRoutesData, dispatchListRoutesErrors, dispatchListRoutesResponses, dispatchPendingMapData, dispatchPendingMapResponses, dispatchUpdateRouteData, dispatchUpdateRouteErrors, dispatchUpdateRouteResponses, driverMarkDeliveredData, driverMarkDeliveredErrors, driverMarkDeliveredResponses, driverMarkPaymentCollectedData, driverMarkPaymentCollectedErrors, driverMarkPaymentCollectedResponses, driverTodaysRouteData, driverTodaysRouteResponses, fleetAddMaintenanceLogData, fleetAddMaintenanceLogErrors, fleetAddMaintenanceLogResponses, fleetCreateVehicleData, fleetCreateVehicleErrors, fleetCreateVehicleResponses, fleetListVehiclesData, fleetListVehiclesErrors, fleetListVehiclesResponses, fleetUpdateVehicleData, fleetUpdateVehicleErrors, fleetUpdateVehicleResponses, ordersCancelOrderData, ordersCancelOrderErrors, ordersCancelOrderResponses, ordersConfirmOrderData, ordersConfirmOrderErrors, ordersConfirmOrderResponses, ordersCreateOrderData, ordersCreateOrderErrors, ordersCreateOrderResponses, ordersListOrdersData, ordersListOrdersErrors, ordersListOrdersResponses, ordersReadOrderData, ordersReadOrderErrors, ordersReadOrderResponses, pricingCreatePricingData, pricingCreatePricingErrors, pricingCreatePricingResponses, pricingReadCurrentPricingData, pricingReadCurrentPricingResponses, reportsCashReconciliationData, reportsCashReconciliationErrors, reportsCashReconciliationResponses, reviewsCreateReviewData, reviewsCreateReviewErrors, reviewsCreateReviewResponses, reviewsListReviewsData, reviewsListReviewsErrors, reviewsListReviewsResponses, telegramTelegramWebhookData, telegramTelegramWebhookErrors, telegramTelegramWebhookResponses, usersCreateUserData, usersCreateUserErrors, usersCreateUserResponses, usersDeleteUserData, usersDeleteUserErrors, usersDeleteUserMeData, usersDeleteUserMeResponses, usersDeleteUserResponses, usersReadUserByIdData, usersReadUserByIdErrors, usersReadUserByIdResponses, usersReadUserMeData, usersReadUserMeResponses, usersReadUsersData, usersReadUsersErrors, usersReadUsersResponses, usersReissueTelegramLinkCodeData, usersReissueTelegramLinkCodeErrors, usersReissueTelegramLinkCodeResponses, usersUpdateUserData, usersUpdateUserErrors, usersUpdateUserMeData, usersUpdateUserMeErrors, usersUpdateUserMeResponses, usersUpdateUserResponses, utilsHealthCheckData, utilsHealthCheckResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -77,7 +77,8 @@ export class UsersService {
      * Create User
      *
      * Create a new user (dispatcher/driver/admin accounts are created here by an
-     * admin; customers self-register via OTP).
+     * admin; customers self-register via OTP). For dispatcher/driver accounts the
+     * response includes a one-time ``telegram_link_code`` to hand over.
      */
     public static createUser<ThrowOnError extends boolean = true>(options: Options<usersCreateUserData, ThrowOnError>) {
         return (options.client ?? client).post<usersCreateUserResponses, usersCreateUserErrors, ThrowOnError>({
@@ -89,6 +90,20 @@ export class UsersService {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
+        });
+    }
+    
+    /**
+     * Reissue Telegram Link Code
+     *
+     * Issue a fresh Telegram linking code for a dispatcher/driver.
+     */
+    public static reissueTelegramLinkCode<ThrowOnError extends boolean = true>(options: Options<usersReissueTelegramLinkCodeData, ThrowOnError>) {
+        return (options.client ?? client).post<usersReissueTelegramLinkCodeResponses, usersReissueTelegramLinkCodeErrors, ThrowOnError>({
+            responseType: 'json',
+            security: [{ scheme: 'bearer', type: 'http' }],
+            url: '/api/v1/users/{user_id}/telegram-link-code',
+            ...options
         });
     }
     
@@ -518,6 +533,22 @@ export class ReviewsService {
                 'Content-Type': 'application/json',
                 ...options.headers
             }
+        });
+    }
+}
+
+export class TelegramService {
+    /**
+     * Telegram Webhook
+     *
+     * Inbound bot messages (Telegram calls this). Used mainly for the
+     * ``/link <code>`` flow. Always answers 200 so Telegram doesn't retry.
+     */
+    public static telegramWebhook<ThrowOnError extends boolean = true>(options?: Options<telegramTelegramWebhookData, ThrowOnError>) {
+        return (options?.client ?? client).post<telegramTelegramWebhookResponses, telegramTelegramWebhookErrors, ThrowOnError>({
+            responseType: 'json',
+            url: '/api/v1/telegram/webhook',
+            ...options
         });
     }
 }

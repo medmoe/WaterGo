@@ -71,12 +71,23 @@ const AddUser = () => {
     },
   })
 
+  const [linkCode, setLinkCode] = useState<string | null>(null)
+
+  const close = () => {
+    form.reset()
+    setLinkCode(null)
+    setIsOpen(false)
+  }
+
   const mutation = useMutation({
     mutationFn: (data: UserCreate) => UsersService.createUser({ body: data }),
-    onSuccess: () => {
+    onSuccess: (res) => {
       showSuccessToast(t("admin.created"))
-      form.reset()
-      setIsOpen(false)
+      if (res.data.telegram_link_code) {
+        setLinkCode(res.data.telegram_link_code)
+      } else {
+        close()
+      }
     },
     onError: handleError.bind(showErrorToast),
     onSettled: () => {
@@ -89,119 +100,135 @@ const AddUser = () => {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={(o) => (o ? setIsOpen(true) : close())}>
       <DialogTrigger asChild>
         <Button className="my-4">
           <Plus className="mr-2" />
-          Add User
+          {t("admin.addUser")}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t("admin.addUser")}</DialogTitle>
-          <DialogDescription>{t("admin.addUserDesc")}</DialogDescription>
+          <DialogTitle>
+            {linkCode ? t("admin.telegramCodeTitle") : t("admin.addUser")}
+          </DialogTitle>
+          <DialogDescription>
+            {linkCode
+              ? t("admin.telegramCodeHelp", { code: linkCode })
+              : t("admin.addUserDesc")}
+          </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="grid gap-4 py-4">
-              <FormField
-                control={form.control}
-                name="phone_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("admin.phone")}{" "}
-                      <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t("order.phonePh")}
-                        type="tel"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              <FormField
-                control={form.control}
-                name="full_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("admin.fullName")}</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t("admin.fullNamePh")}
-                        type="text"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("admin.role")}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+        {linkCode ? (
+          <div className="flex flex-col items-center gap-4 py-4">
+            <code className="rounded-md bg-muted px-4 py-2 text-2xl font-bold tracking-widest">
+              {linkCode}
+            </code>
+            <Button onClick={close}>{t("admin.done")}</Button>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="grid gap-4 py-4">
+                <FormField
+                  control={form.control}
+                  name="phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("admin.phone")}{" "}
+                        <span className="text-destructive">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
+                        <Input
+                          placeholder={t("order.phonePh")}
+                          type="tel"
+                          {...field}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {ROLES.map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {t(`roles.${role}`)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="is_active"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      {t("admin.isActive")}
-                    </FormLabel>
-                  </FormItem>
-                )}
-              />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="full_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.fullName")}</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t("admin.fullNamePh")}
+                          type="text"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline" disabled={mutation.isPending}>
-                  {t("common.cancel")}
-                </Button>
-              </DialogClose>
-              <LoadingButton type="submit" loading={mutation.isPending}>
-                {t("common.save")}
-              </LoadingButton>
-            </DialogFooter>
-          </form>
-        </Form>
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("admin.role")}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {ROLES.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {t(`roles.${role}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="is_active"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-3 space-y-0">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">
+                        {t("admin.isActive")}
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline" disabled={mutation.isPending}>
+                    {t("common.cancel")}
+                  </Button>
+                </DialogClose>
+                <LoadingButton type="submit" loading={mutation.isPending}>
+                  {t("common.save")}
+                </LoadingButton>
+              </DialogFooter>
+            </form>
+          </Form>
+        )}
       </DialogContent>
     </Dialog>
   )

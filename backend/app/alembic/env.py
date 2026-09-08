@@ -2,7 +2,7 @@ import os
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import engine_from_config, pool, text
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -27,9 +27,21 @@ from app.core.config import settings # noqa
 target_metadata = SQLModel.metadata
 
 
+# Schemas the PostGIS image's extensions own (postgis_tiger_geocoder, topology).
+# Our migrations only touch `public`.
+_EXTENSION_SCHEMAS = {"tiger", "tiger_data", "topology"}
+
+
 def _include_object(obj, name, type_, reflected, compare_to):
-    # Ignore PostGIS-managed objects (spatial_ref_sys, spatial indexes, the
-    # geometry_columns view, ...) so autogenerate/`alembic check` stay clean.
+    # Skip objects owned by PostGIS extension schemas (the tiger geocoder adds
+    # `tiger` to the DB search_path, so reflection would otherwise pick them up).
+    schema = getattr(obj, "schema", None) or getattr(
+        getattr(obj, "table", None), "schema", None
+    )
+    if schema in _EXTENSION_SCHEMAS:
+        return False
+    # Ignore PostGIS-managed objects in public (spatial_ref_sys, spatial indexes,
+    # the geometry_columns view, ...) so autogenerate / `alembic check` stay clean.
     return alembic_helpers.include_object(obj, name, type_, reflected, compare_to)
 
 # other values from the config, defined by the needs of env.py,
@@ -85,6 +97,9 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
+        # The tiger geocoder extension puts `tiger` on the DB search_path;
+        # pin migrations + reflection to `public`.
+        connection.execute(text("SET search_path TO public"))
         context.configure(
             connection=connection,
             target_metadata=target_metadata,

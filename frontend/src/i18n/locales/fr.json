@@ -181,7 +181,11 @@
     "colFullName": "Nom complet",
     "colPhone": "Téléphone",
     "fullNamePh": "Nom complet",
-    "userDeleted": "Utilisateur supprimé"
+    "userDeleted": "Utilisateur supprimé",
+    "addUserBtn": "Ajouter",
+    "done": "Terminé",
+    "telegramCodeTitle": "Code de liaison Telegram",
+    "telegramCodeHelp": "Communiquez ce code à la personne. Elle ouvre le bot Telegram et envoie : /link {{code}} (valable 1 h)."
   },
   "appearance": {
     "label": "Apparence",

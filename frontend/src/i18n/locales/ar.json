@@ -181,7 +181,11 @@
     "colFullName": "الاسم الكامل",
     "colPhone": "الهاتف",
     "fullNamePh": "الاسم الكامل",
-    "userDeleted": "تم حذف المستخدم"
+    "userDeleted": "تم حذف المستخدم",
+    "addUserBtn": "إضافة",
+    "done": "تم",
+    "telegramCodeTitle": "رمز ربط تيليغرام",
+    "telegramCodeHelp": "سلّم هذا الرمز للشخص. يفتح بوت تيليغرام ويرسل: /link {{code}} (صالح لمدة ساعة)."
   },
   "appearance": {
     "label": "المظهر",
