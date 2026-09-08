@@ -4,8 +4,8 @@ This document summarises what was built on top of `fastapi/full-stack-fastapi-te
 to execute the task list in `PROJECT_SPEC.md` §18. It is the map from the spec to the
 code. For deferred work see [`follow-ups.md`](./follow-ups.md).
 
-- **13 commits on `master`**, one per task (`git log --oneline`).
-- Backend: **95 pytest tests, ~94% line coverage**, `ruff` / `mypy --strict` / `ty` /
+- **19 commits on `master`** (`git log --oneline`).
+- Backend: **120 pytest tests, ~94% line coverage**, `ruff` / `mypy --strict` / `ty` /
   `alembic check` all clean.
 - Frontend builds clean (`tsc` + `vite`); public-flow Playwright specs added.
 - Whole stack verified end-to-end in Docker (order → delivery → cash report → worker
@@ -19,7 +19,7 @@ code. For deferred work see [`follow-ups.md`](./follow-ups.md).
 |---|---|
 | API | FastAPI + SQLModel, routers under `app/api/routes/`, DI for DB session / current user |
 | DB | PostgreSQL **`postgis/postgis:16-3.4`** (was plain `postgres:18`) |
-| Migrations | Alembic — history squashed to 4 grouped migrations; `geoalchemy2.alembic_helpers` wired into `env.py` |
+| Migrations | Alembic — 5 grouped migrations; `geoalchemy2.alembic_helpers` + `public`-schema pin in `env.py` |
 | Auth | Phone number + OTP (JWT issuance only changed; `get_current_user` untouched) |
 | Background jobs | Celery + Redis (`worker` service, `celery -A app.worker.celery_app worker`) |
 | Realtime | In-process WebSocket manager (no broker) |
@@ -53,14 +53,16 @@ app/
     ws.py                   ConnectionManager (dispatch + per-driver channels)
     reviews.py              signed review token, create_review, list_reviews
     reports.py              cash reconciliation
+    telegram.py             team Telegram notifications + /link account flow
   api/routes/
-    auth.py       orders.py  dispatch.py  driver.py  vehicles.py
-    pricing.py    reviews.py  reports.py   ws.py
+    auth.py    orders.py  dispatch.py  driver.py  vehicles.py
+    pricing.py reviews.py  reports.py   ws.py  telegram.py
   alembic/versions/
     0001_users_and_postgis.py     users + CREATE EXTENSION postgis
     0002_locations_vehicles.py    locations (geom + GiST index), vehicles, maintenance_logs
     0003_orders_routes.py         orders, routes, route_stops
     0004_reviews_pricing.py       pricing_settings, reviews, notification_logs
+    0005_user_telegram_chat_id.py users.telegram_chat_id
 ```
 
 ### Added — frontend
@@ -190,18 +192,30 @@ Getting a code in dev: `docker compose logs worker | grep stub-sms`, or
 - `enqueue_notification` / `enqueue_review_request` — fire-and-forget helpers, never
   raise; called from the service layer.
 
+Also `notify_dispatchers_new_order`, `notify_driver_route_assigned` (Telegram), and
+`sms_gateway_healthcheck` (Celery Beat, every 5 min — the `worker` runs with `-B`).
+
 Wiring:
 
-| Event | Task |
+| Event | Task(s) |
 |---|---|
-| `create_order` | `send_notification(order_id, "order_received")` |
+| `create_order` | `send_notification(order_id, "order_received")` (customer SMS) + `notify_dispatchers_new_order` (team Telegram) |
+| route created | `notify_driver_route_assigned` (team Telegram) + the `/ws/driver` push |
 | stop `delivered` | `request_review(order_id)` |
+| every 5 min | `sms_gateway_healthcheck` → Telegram alert to dispatchers if the SMS gateway is down |
 
-**Provider stub** — `app/services/notifications.py` exposes `send(phone, message)` behind
-a `NotificationProvider` protocol. `LoggingProvider` just logs; swapping in a real
-Algerian SMS/WhatsApp gateway means implementing the protocol and pointing `provider`
-at it (`SMS_PROVIDER_API_KEY` / `SMS_PROVIDER_BASE_URL` reserved). No calling code
-changes.
+**Provider seam** — `app/services/notifications.py` exposes `send(phone, message)` behind
+a `NotificationProvider` protocol. `_build_provider()` picks, in order:
+`AndroidGatewaySmsProvider` (SIM-based SMS gateway, when `SMS_GATEWAY_BASE_URL` +
+`SMS_GATEWAY_API_KEY` are set) → the Infobip/WhatsApp provider (`SMS_PROVIDER_*`,
+reserved, not built) → `LoggingProvider` stub. `provider_healthy()` feeds the health
+check. No calling code changes between providers. See
+[`interim-messaging.md`](./interim-messaging.md).
+
+**Telegram (internal team)** — `app/services/telegram.py` + `POST /telegram/webhook`.
+Accounts link via a one-time code (`/link <code>`, Redis, 1 h) shown when an admin creates
+a dispatcher/driver; `users.telegram_chat_id` (migration `0005`) is set only by that flow.
+Not customer-facing.
 
 **Reviews** — `app/services/reviews.py`: `make_review_token` (JWT, `sub=order_id`,
 `purpose=review`, 14-day TTL), `create_review` (delivered orders only; authorised by a
@@ -295,7 +309,7 @@ Each commit message carries the per-task assumptions/deviations.
 |---|---|
 | 20.1 Password fallback for dispatcher/admin | **OTP-only for everyone.** No password anywhere; first admin seeded by phone. |
 | 20.2 Guest checkout | **Allowed.** `POST /orders` works anonymously with `customer_phone`; guests track by `?phone=`. |
-| 20.3 SMS/WhatsApp provider | Deferred behind `NotificationProvider`; `LoggingProvider` until a gateway is chosen. |
+| 20.3 SMS/WhatsApp provider | Interim: SIM-based Android SMS gateway for customers + Telegram for the team (see interim-messaging.md). Infobip/WhatsApp is the planned upgrade. |
 | 20.4 Depot / yard location | Not needed yet (only the deferred clustering uses it). See `follow-ups.md`. |
 
 ## 13. Deviations from the spec

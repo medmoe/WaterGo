@@ -1,5 +1,19 @@
 # Deferred work
 
+## Messaging — interim setup is live; Infobip + WhatsApp is the upgrade
+
+**Now:** customer SMS goes through a SIM-based Android SMS gateway
+(`AndroidGatewaySmsProvider`), and the internal team gets Telegram push
+notifications. Details and remaining physical/operational steps:
+[`interim-messaging.md`](./interim-messaging.md).
+
+**Upgrade path (when order volume justifies the cost):**
+- Customer SMS → implement an Infobip-backed `NotificationProvider` and add its
+  branch to `notifications._build_provider()`. One place; orders/dispatch/driver
+  code is untouched (they only call `notifications.send`).
+- WhatsApp → additive; a template-based provider layered in independently.
+- Telegram for the team stays (free, no volume ceiling, not a customer channel).
+
 ## Route clustering — the dispatcher's "suggest a route" button (spec section 12)
 
 **Status: not built.** Task 18.11 says to ship manual route building first and
