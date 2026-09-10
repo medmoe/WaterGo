@@ -10,5 +10,7 @@ backend/app/frontend/
 .idea
 .venv
 
-# local secret overrides (bot tokens, gateway keys)
+# environment - copy .env.example to .env (never commit real secrets)
+.env
 .env.local
+.env.production

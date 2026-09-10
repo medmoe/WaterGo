@@ -335,7 +335,11 @@ Each commit message carries the per-task assumptions/deviations.
 **Prereqs:** Docker + Docker Compose. (Host-side backend dev also needs `uv`, which
 fetches Python 3.14 itself.)
 
-### Environment (`/.env`, already populated with dev defaults)
+### Environment
+
+`.env` is **git-ignored** — `cp .env.example .env` (the checked-in example carries
+working dev defaults). Production values and the full deploy runbook for
+**sarbili.store** on a single VPS: [`deployment.md`](./deployment.md).
 
 New variables this pass:
 

@@ -2,12 +2,18 @@
 
 ## Local Development
 
-For local development, run PostgreSQL and Mailpit with Docker Compose, and run the FastAPI and Vite development servers locally.
+First, create your env file (git-ignored; the defaults work for local dev as-is):
+
+```bash
+cp .env.example .env
+```
+
+For local development, run PostgreSQL and Redis with Docker Compose, and run the FastAPI and Vite development servers locally.
 
 Start the supporting services:
 
 ```bash
-docker compose up -d db mailpit
+docker compose up -d db redis
 ```
 
 Then, from the `backend` directory, install the dependencies and prepare the database:

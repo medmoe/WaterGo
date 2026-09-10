@@ -24,6 +24,8 @@ services:
       - --entrypoints.https.address=:443
       # Store the Let's Encrypt certificates in the mounted volume
       - --certificatesresolvers.le.acme.storage=/certificates/acme.json
+      # Contact address for Let's Encrypt expiry notices
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL:?Variable not set}
       # Use the TLS Challenge for Let's Encrypt
       - --certificatesresolvers.le.acme.tlschallenge=true
       # Enable the access log, with HTTP requests
@@ -39,24 +41,24 @@ services:
 
   worker:
     restart: always
+    environment:
+      # so review links in customer SMS point at the real site
+      FRONTEND_HOST: https://${DOMAIN:?Variable not set}
 
+  # Not exposed publicly in production. Reach it over an SSH tunnel and:
+  #   docker compose --profile tools up -d adminer
   adminer:
     restart: always
-    labels:
-      # Route HTTPS traffic for the Adminer subdomain
-      - traefik.http.routers.adminer-https.rule=Host(`adminer.${DOMAIN:?Variable not set}`)
-      - traefik.http.routers.adminer-https.entrypoints=https
-      - traefik.http.routers.adminer-https.tls=true
-      # Use the Let's Encrypt resolver
-      - traefik.http.routers.adminer-https.tls.certresolver=le
+    profiles:
+      - tools
 
   backend:
     restart: always
     environment:
       FRONTEND_HOST: https://${DOMAIN:?Variable not set}
     labels:
-      # Route HTTPS traffic for this domain
-      - traefik.http.routers.backend-https.rule=Host(`${DOMAIN:?Variable not set}`)
+      # Route HTTPS traffic for the apex and www
+      - traefik.http.routers.backend-https.rule=Host(`${DOMAIN:?Variable not set}`) || Host(`www.${DOMAIN:?Variable not set}`)
       - traefik.http.routers.backend-https.entrypoints=https
       - traefik.http.routers.backend-https.tls=true
       # Use the Let's Encrypt resolver
