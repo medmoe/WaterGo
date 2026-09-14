@@ -21,8 +21,12 @@ def get_auth_headers_for_user(user: User) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
 
-def create_random_user(db: Session, *, role: UserRole = UserRole.customer) -> User:
-    user_in = UserCreate(phone_number=random_phone_number(), role=role)
+def create_random_user(
+    db: Session, *, role: UserRole = UserRole.customer, is_active: bool = True
+) -> User:
+    user_in = UserCreate(
+        phone_number=random_phone_number(), role=role, is_active=is_active
+    )
     return crud.create_user(session=db, user_create=user_in)
 
 

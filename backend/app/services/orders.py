@@ -10,6 +10,7 @@ from fastapi import HTTPException
 from sqlalchemy import func
 from sqlmodel import Session, col, select
 
+from app import crud
 from app.models import (
     Location,
     Order,
@@ -45,7 +46,15 @@ def _point(lat: float, lng: float) -> object:
 def create_order(
     session: Session, *, order_in: OrderCreate, current_user: User | None
 ) -> Order:
-    """Create a pending order. Snapshots the active per-liter price."""
+    """Create a pending order. Snapshots the active per-liter price.
+
+    Every order is tied to a `users` row, even guest checkout: the phone
+    number is looked up (or a new customer account is created for it) rather
+    than left orphaned. This means order/location history accumulates per
+    phone number from the first order onward - useful for reporting later,
+    and it means a guest who eventually logs in with the same number sees
+    their past orders under "mine" instead of losing them.
+    """
     phone = order_in.customer_phone or (
         current_user.phone_number if current_user else None
     )
@@ -55,8 +64,20 @@ def create_order(
             detail="customer_phone is required for guest orders",
         )
 
+    if current_user is not None:
+        customer = current_user
+    else:
+        customer, _ = crud.get_or_create_user_by_phone(
+            session=session, phone_number=phone
+        )
+    if not customer.is_active:
+        raise HTTPException(
+            status_code=403,
+            detail="This phone number is inactive and can't place orders",
+        )
+
     location = Location(
-        user_id=current_user.id if current_user else None,
+        user_id=customer.id,
         raw_lat=order_in.location.raw_lat,
         raw_lng=order_in.location.raw_lng,
         landmark_text=order_in.location.landmark_text,
@@ -68,7 +89,7 @@ def create_order(
 
     price = pricing.get_current_price(session)
     order = Order(
-        customer_id=current_user.id if current_user else None,
+        customer_id=customer.id,
         customer_phone=phone,
         location_id=location.id,
         quantity_liters=order_in.quantity_liters,

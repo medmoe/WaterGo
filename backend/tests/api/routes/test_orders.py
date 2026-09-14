@@ -10,7 +10,7 @@ from tests.utils.utils import random_phone_number
 BASE = settings.API_V1_STR
 
 
-def test_guest_can_place_order(client: TestClient) -> None:
+def test_guest_can_place_order(client: TestClient, db: Session) -> None:
     phone = random_phone_number()
     r = client.post(
         f"{BASE}/orders", json=order_payload(quantity_liters=1500, customer_phone=phone)
@@ -18,13 +18,42 @@ def test_guest_can_place_order(client: TestClient) -> None:
     assert r.status_code == 200, r.text
     body = r.json()
     assert body["status"] == "pending"
-    assert body["customer_id"] is None
     assert body["customer_phone"] == phone
     assert body["quantity_liters"] == 1500
     # price snapshot: default 4 DZD/L
     assert float(body["price_per_liter_dzd"]) == 4.0
     assert float(body["total_price_dzd"]) == 6000.0
     assert body["location"]["commune"] == "Batna"
+
+    # a guest order still resolves/creates a customer account (for analytics
+    # and so their order history isn't orphaned)
+    assert body["customer_id"] is not None
+    from app import crud
+
+    user = crud.get_user_by_phone(session=db, phone_number=phone)
+    assert user is not None
+    assert str(user.id) == body["customer_id"]
+    assert user.role == UserRole.customer
+
+
+def test_guest_orders_from_the_same_phone_share_one_account(
+    client: TestClient,
+) -> None:
+    phone = random_phone_number()
+    r1 = client.post(f"{BASE}/orders", json=order_payload(customer_phone=phone))
+    r2 = client.post(f"{BASE}/orders", json=order_payload(customer_phone=phone))
+    assert r1.json()["customer_id"] == r2.json()["customer_id"]
+
+
+def test_guest_order_rejected_for_inactive_phone(
+    client: TestClient, db: Session
+) -> None:
+    banned = create_random_user(db, role=UserRole.customer, is_active=False)
+    r = client.post(
+        f"{BASE}/orders",
+        json=order_payload(customer_phone=banned.phone_number),
+    )
+    assert r.status_code == 403
 
 
 def test_logged_in_customer_order_links_account(
