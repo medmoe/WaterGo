@@ -48,6 +48,27 @@ def test_route_assignment_pings_linked_driver(
     assert any("tournée" in t for t in hits)
 
 
+def test_route_start_pings_linked_driver(
+    db: Session, no_telegram_http: list[tuple[str, str]]
+) -> None:
+    driver = create_random_user(db, role=UserRole.driver)
+    _link(db, driver, "driver-chat-start")
+    route = build_route(db, driver=driver, n_orders=1)
+
+    routes_service.update_route(db, route, status=RouteStatus.in_progress)
+
+    hits = [t for c, t in no_telegram_http if c == "driver-chat-start"]
+    assert any("démarre" in t for t in hits)
+
+
+def test_route_start_is_a_noop_for_unlinked_driver(db: Session) -> None:
+    # must not raise even though the driver never linked Telegram
+    route = build_route(db, n_orders=1)
+    routes_service.update_route(db, route, status=RouteStatus.in_progress)
+    db.refresh(route)
+    assert route.status == RouteStatus.in_progress
+
+
 def test_healthcheck_alerts_when_gateway_down(
     db: Session,
     monkeypatch: pytest.MonkeyPatch,

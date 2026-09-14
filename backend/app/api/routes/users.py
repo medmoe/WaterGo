@@ -147,7 +147,7 @@ def read_user_by_id(
 @router.patch(
     "/{user_id}",
     dependencies=[Depends(get_current_admin)],
-    response_model=UserPublic,
+    response_model=UserCreated,
 )
 def update_user(
     *,
@@ -156,7 +156,10 @@ def update_user(
     user_in: UserUpdate,
 ) -> Any:
     """
-    Update a user.
+    Update a user. If this leaves a dispatcher/driver account without a linked
+    Telegram chat (e.g. a customer just got promoted, or one was created by
+    role update rather than `POST /users/`), a fresh `telegram_link_code` is
+    included in the response.
     """
     db_user = session.get(User, user_id)
     if not db_user:
@@ -174,7 +177,15 @@ def update_user(
                 detail="A user with this phone number already exists",
             )
 
-    return crud.update_user(session=session, db_user=db_user, user_in=user_in)
+    db_user = crud.update_user(session=session, db_user=db_user, user_in=user_in)
+    code = (
+        telegram.issue_link_code(db_user.id)
+        if db_user.role in _TELEGRAM_ROLES and not db_user.telegram_chat_id
+        else None
+    )
+    return UserCreated(
+        **UserPublic.model_validate(db_user).model_dump(), telegram_link_code=code
+    )
 
 
 @router.delete("/{user_id}", dependencies=[Depends(get_current_admin)])

@@ -185,7 +185,8 @@
     "addUserBtn": "إضافة",
     "done": "تم",
     "telegramCodeTitle": "رمز ربط تيليغرام",
-    "telegramCodeHelp": "سلّم هذا الرمز للشخص. يفتح بوت تيليغرام ويرسل: /link {{code}} (صالح لمدة ساعة)."
+    "telegramCodeHelp": "سلّم هذا الرمز للشخص. يفتح بوت تيليغرام ويرسل: /link {{code}} (صالح لمدة ساعة).",
+    "getTelegramCode": "الحصول على رمز تيليغرام"
   },
   "appearance": {
     "label": "المظهر",

@@ -185,7 +185,8 @@
     "addUserBtn": "Ajouter",
     "done": "Terminé",
     "telegramCodeTitle": "Code de liaison Telegram",
-    "telegramCodeHelp": "Communiquez ce code à la personne. Elle ouvre le bot Telegram et envoie : /link {{code}} (valable 1 h)."
+    "telegramCodeHelp": "Communiquez ce code à la personne. Elle ouvre le bot Telegram et envoie : /link {{code}} (valable 1 h).",
+    "getTelegramCode": "Obtenir un code Telegram"
   },
   "appearance": {
     "label": "Apparence",

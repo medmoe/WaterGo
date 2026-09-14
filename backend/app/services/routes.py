@@ -160,6 +160,10 @@ def update_route(
                 "status": route.status.value,
             }
         )
+        if route.status == RouteStatus.in_progress:
+            from app.tasks import enqueue_route_started_notification
+
+            enqueue_route_started_notification(route.id)
     return route
 
 

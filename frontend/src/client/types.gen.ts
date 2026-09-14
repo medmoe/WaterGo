@@ -1153,7 +1153,7 @@ export type usersUpdateUserResponses = {
     /**
      * Successful Response
      */
-    200: UserPublic;
+    200: UserCreated;
 };
 
 export type usersUpdateUserResponse = usersUpdateUserResponses[keyof usersUpdateUserResponses];

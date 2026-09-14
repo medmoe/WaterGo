@@ -57,7 +57,48 @@ def test_reissue_rejects_non_team_role(client: TestClient, db: Session) -> None:
     assert r.status_code == 400
 
 
-def test_webhook_link_flow(client: TestClient, db: Session) -> None:
+def test_promoting_customer_to_dispatcher_issues_a_link_code(
+    client: TestClient, db: Session
+) -> None:
+    # this is the exact gap that left a real dispatcher without a chat_id:
+    # the account existed (e.g. self-created via OTP) and was promoted via
+    # PATCH, which never used to hand out a code at all
+    admin = create_random_user(db, role=UserRole.admin)
+    customer = create_random_user(db, role=UserRole.customer)
+    r = client.patch(
+        f"{BASE}/users/{customer.id}",
+        headers=get_auth_headers_for_user(admin),
+        json={"role": "dispatcher"},
+    )
+    assert r.status_code == 200, r.text
+    code = r.json()["telegram_link_code"]
+    assert code and telegram.consume_link_code(code) == customer.id
+
+
+def test_updating_an_already_linked_dispatcher_gets_no_new_code(
+    client: TestClient, db: Session
+) -> None:
+    admin = create_random_user(db, role=UserRole.admin)
+    dispatcher = create_random_user(db, role=UserRole.dispatcher)
+    dispatcher.telegram_chat_id = "already-linked"
+    db.add(dispatcher)
+    db.commit()
+
+    r = client.patch(
+        f"{BASE}/users/{dispatcher.id}",
+        headers=get_auth_headers_for_user(admin),
+        json={"full_name": "New Name"},
+    )
+    assert r.status_code == 200
+    assert r.json()["telegram_link_code"] is None
+
+
+def test_webhook_link_flow(
+    client: TestClient, db: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # explicit, so this doesn't depend on whether a real TELEGRAM_WEBHOOK_SECRET
+    # happens to be configured in the environment running the tests
+    monkeypatch.setattr("app.core.config.settings.TELEGRAM_WEBHOOK_SECRET", None)
     user = create_random_user(db, role=UserRole.dispatcher)
     code = telegram.issue_link_code(user.id)
     r = client.post(

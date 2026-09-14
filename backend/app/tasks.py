@@ -151,6 +151,26 @@ def notify_driver_route_assigned(route_id: str) -> None:
         )
 
 
+@celery_app.task(name="app.tasks.notify_driver_route_started")
+def notify_driver_route_started(route_id: str) -> None:
+    """Ping the driver the moment the dispatcher starts their route.
+
+    Not in the original interim-messaging spec (which only covers the
+    "assigned" event), added because a route is very often created the day
+    before it runs - the driver needs a nudge when it's actually time to go,
+    not just when it was scheduled.
+    """
+    with Session(engine) as session:
+        route = session.get(Route, UUID(route_id))
+        if route is None or not route.driver or not route.driver.telegram_chat_id:
+            return
+        telegram.send_message(
+            route.driver.telegram_chat_id,
+            f"▶️ Votre tournée du {route.planned_date} démarre — "
+            f"{len(route.stops)} arrêt(s). Bonne route !",
+        )
+
+
 @celery_app.task(name="app.tasks.sms_gateway_healthcheck")
 def sms_gateway_healthcheck() -> None:
     """Alert dispatchers on Telegram if the SMS gateway is unreachable (A.5)."""
@@ -194,3 +214,10 @@ def enqueue_route_assigned_notification(route_id: UUID) -> None:
         notify_driver_route_assigned.delay(str(route_id))
     except Exception:  # noqa: BLE001
         logger.exception("failed to enqueue route-assigned Telegram for %s", route_id)
+
+
+def enqueue_route_started_notification(route_id: UUID) -> None:
+    try:
+        notify_driver_route_started.delay(str(route_id))
+    except Exception:  # noqa: BLE001
+        logger.exception("failed to enqueue route-started Telegram for %s", route_id)

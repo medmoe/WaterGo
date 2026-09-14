@@ -184,7 +184,10 @@ export class UsersService {
     /**
      * Update User
      *
-     * Update a user.
+     * Update a user. If this leaves a dispatcher/driver account without a linked
+     * Telegram chat (e.g. a customer just got promoted, or one was created by
+     * role update rather than `POST /users/`), a fresh `telegram_link_code` is
+     * included in the response.
      */
     public static updateUser<ThrowOnError extends boolean = true>(options: Options<usersUpdateUserData, ThrowOnError>) {
         return (options.client ?? client).patch<usersUpdateUserResponses, usersUpdateUserErrors, ThrowOnError>({
