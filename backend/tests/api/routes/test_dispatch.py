@@ -16,6 +16,35 @@ def _dispatcher_headers(db: Session) -> dict[str, str]:
     return get_auth_headers_for_user(create_random_user(db, role=UserRole.dispatcher))
 
 
+def test_list_drivers_is_dispatcher_accessible_and_scoped(
+    client: TestClient, db: Session
+) -> None:
+    # a plain dispatcher (not admin) must be able to load this - it's what
+    # regressed and 403'd the whole dispatch page for non-admin dispatchers
+    headers = _dispatcher_headers(db)
+    driver = create_random_user(db, role=UserRole.driver)
+    inactive_driver = create_random_user(db, role=UserRole.driver)
+    inactive_driver.is_active = False
+    db.add(inactive_driver)
+    create_random_user(db, role=UserRole.customer)
+    db.commit()
+
+    r = client.get(f"{BASE}/dispatch/drivers", headers=headers)
+    assert r.status_code == 200
+    ids = {u["id"] for u in r.json()}
+    assert str(driver.id) in ids
+    assert str(inactive_driver.id) not in ids
+    assert all(u["role"] == "driver" for u in r.json())
+
+
+def test_list_drivers_rejects_customer(client: TestClient, db: Session) -> None:
+    customer = create_random_user(db, role=UserRole.customer)
+    r = client.get(
+        f"{BASE}/dispatch/drivers", headers=get_auth_headers_for_user(customer)
+    )
+    assert r.status_code == 403
+
+
 def test_pending_map_only_lists_unrouted_confirmed(
     client: TestClient, db: Session
 ) -> None:

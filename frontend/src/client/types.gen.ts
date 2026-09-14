@@ -1312,6 +1312,24 @@ export type ordersCancelOrderResponses = {
 
 export type ordersCancelOrderResponse = ordersCancelOrderResponses[keyof ordersCancelOrderResponses];
 
+export type dispatchListDriversData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/dispatch/drivers';
+};
+
+export type dispatchListDriversResponses = {
+    /**
+     * Response Dispatch-List Drivers
+     *
+     * Successful Response
+     */
+    200: Array<UserPublic>;
+};
+
+export type dispatchListDriversResponse = dispatchListDriversResponses[keyof dispatchListDriversResponses];
+
 export type dispatchPendingMapData = {
     body?: never;
     path?: never;

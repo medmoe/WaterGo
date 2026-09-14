@@ -59,9 +59,8 @@ function Dispatch() {
     queryFn: async () => (await FleetService.listVehicles()).data,
   })
   const drivers = useQuery({
-    queryKey: ["users", "drivers"],
-    queryFn: async () =>
-      (await UsersService.readUsers({ query: { limit: 200 } })).data,
+    queryKey: ["dispatch", "drivers"],
+    queryFn: async () => (await DispatchService.listDrivers()).data,
   })
 
   const confirm = useMutation({
@@ -108,9 +107,7 @@ function Dispatch() {
     onSuccess: invalidateAll,
   })
 
-  const driverList = (drivers.data?.data ?? []).filter(
-    (u) => u.role === "driver",
-  )
+  const driverList = drivers.data ?? []
   const L = t("common.liters")
 
   return (

@@ -12,10 +12,17 @@ from app.models import (
     RoutePublic,
     RoutesPublic,
     RouteUpdate,
+    UserPublic,
 )
 from app.services import routes as routes_service
 
 router = APIRouter(prefix="/dispatch", tags=["dispatch"])
+
+
+@router.get("/drivers", response_model=list[UserPublic])
+def list_drivers(session: SessionDep, _user: DispatcherUser) -> Any:
+    """Active drivers, for the route-builder's driver picker."""
+    return routes_service.list_drivers(session)
 
 
 @router.get("/pending-map", response_model=list[PendingMapPoint])

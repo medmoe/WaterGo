@@ -21,10 +21,12 @@ client.setConfig({
 })
 
 const handleApiError = (error: Error) => {
-  if (
-    error instanceof AxiosError &&
-    [401, 403].includes(error.response?.status ?? 0)
-  ) {
+  // 401 = the token itself is missing/invalid/expired -> the session is dead,
+  // send them to log in again. 403 = a valid, logged-in user just isn't
+  // allowed to do *this particular thing* (wrong role) - that's an ordinary,
+  // recoverable error for one request and must not nuke an otherwise-valid
+  // session (see the dispatcher-login regression this fixed).
+  if (error instanceof AxiosError && error.response?.status === 401) {
     localStorage.removeItem("access_token")
     window.location.href = "/login"
   }

@@ -23,6 +23,21 @@ from app.services import orders as orders_service
 from app.services.ws import manager as ws_manager
 
 
+def list_drivers(session: Session) -> list[User]:
+    """Active drivers, for the dispatcher's route-builder picker.
+
+    Scoped to just this (dispatchers aren't admins and shouldn't get the
+    full `GET /users/` listing - see PROJECT_SPEC.md sections 8/16).
+    """
+    statement = (
+        select(User)
+        .where(User.role == UserRole.driver)
+        .where(User.is_active == True)  # noqa: E712
+        .order_by(col(User.full_name))
+    )
+    return list(session.exec(statement).all())
+
+
 def pending_map(session: Session) -> list[PendingMapPoint]:
     """Confirmed orders not yet attached to a route, as geo points."""
     statement = (
