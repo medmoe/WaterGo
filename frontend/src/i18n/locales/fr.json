@@ -58,7 +58,12 @@
     "totalLine": "Total {{total}} DZD",
     "submit": "Envoyer la commande",
     "error": "Impossible d'envoyer la commande. Vérifiez les champs et réessayez.",
-    "staffArea": "Espace équipe"
+    "staffArea": "Espace équipe",
+    "missingPin": "l'adresse de livraison",
+    "missingLandmark": "le point de repère",
+    "missingCommune": "la commune",
+    "missingPhone": "le numéro de téléphone",
+    "missingFields": "Il manque encore : {{fields}}"
   },
   "track": {
     "title": "Suivi de commande",
@@ -91,7 +96,8 @@
     "code": "Code de vérification",
     "codePh": "123456",
     "verify": "Vérifier",
-    "useOther": "Utiliser un autre numéro"
+    "useOther": "Utiliser un autre numéro",
+    "noAccount": "Aucun compte n'existe encore pour ce numéro. Les clients en obtiennent un automatiquement dès leur première commande ; les répartiteurs et chauffeurs doivent d'abord être ajoutés par un administrateur."
   },
   "dispatch": {
     "title": "Tableau de dispatch",

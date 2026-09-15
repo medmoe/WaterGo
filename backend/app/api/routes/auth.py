@@ -26,16 +26,22 @@ def request_otp(body: OTPRequest) -> Message:
 @router.post("/otp/verify")
 def verify_otp(session: SessionDep, body: OTPVerify) -> Token:
     """
-    Verify a code and return a JWT. Creates the user (role=customer) on first
-    successful login; pre-provisioned dispatcher/driver/admin accounts keep
-    their role.
+    Verify a code and return a JWT.
+
+    This no longer creates the account: customers get one automatically the
+    first time they place an order (see ``orders.create_order``), and
+    dispatcher/driver/admin accounts are always created by an admin. If
+    nobody has an account under this phone number yet, say so plainly
+    instead of silently minting a customer account - that used to leave
+    dispatchers/drivers who hadn't been added yet stuck with the wrong role
+    after "logging in" successfully.
     """
     if not otp.verify_otp(body.phone_number, body.code):
         raise HTTPException(status_code=400, detail="Invalid or expired code")
 
-    user, _ = crud.get_or_create_user_by_phone(
-        session=session, phone_number=body.phone_number
-    )
+    user = crud.get_user_by_phone(session=session, phone_number=body.phone_number)
+    if user is None:
+        raise HTTPException(status_code=404, detail="NO_ACCOUNT")
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
 

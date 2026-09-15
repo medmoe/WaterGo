@@ -1,5 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
+import { AxiosError } from "axios"
+import { useTranslation } from "react-i18next"
 
 import {
   AuthService,
@@ -18,6 +20,7 @@ const isLoggedIn = () => {
 const useAuth = () => {
   const navigate = useNavigate()
   const { showErrorToast } = useCustomToast()
+  const { t } = useTranslation()
 
   const { data: user } = useQuery<UserPublic | null, Error>({
     queryKey: ["currentUser"],
@@ -46,7 +49,20 @@ const useAuth = () => {
             : "/"
       navigate({ to: dest })
     },
-    onError: handleError.bind(showErrorToast),
+    onError: (err: Error) => {
+      // No account exists yet for this phone number - customers get one
+      // automatically on their first order, dispatchers/drivers need an
+      // admin to add them. Show that plainly instead of a generic error.
+      if (
+        err instanceof AxiosError &&
+        err.response?.status === 404 &&
+        err.response.data?.detail === "NO_ACCOUNT"
+      ) {
+        showErrorToast(t("login.noAccount"))
+        return
+      }
+      handleError.bind(showErrorToast)(err)
+    },
   })
 
   const logout = () => {

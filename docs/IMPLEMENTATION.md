@@ -166,14 +166,25 @@ Role dependencies live in `app/api/deps.py`: `CurrentUser`, `CurrentUserOptional
    Redis at `otp:code:<phone>` with TTL `OTP_EXPIRY_SECONDS` (300), sent via
    `notifications.send`. Always returns a generic message (no account enumeration).
 2. `POST /auth/otp/verify {phone_number, code}` → checks the code (single-use, max 5
-   attempts per code), `get_or_create_user_by_phone` (new users → `customer`;
-   pre-provisioned dispatcher/driver/admin keep their role), returns a `Token` via the
-   template's `security.create_access_token`.
+   attempts per code), then looks up the account with `get_user_by_phone`. **It no
+   longer creates one.** If nothing exists for that phone number yet, the endpoint
+   returns `404 {"detail": "NO_ACCOUNT"}` instead of silently minting a `customer`
+   row — the frontend maps that to a "you don't have an account yet" message
+   (`login.noAccount`). Existing accounts keep whatever role they have.
 3. `get_current_user` (JWT decode) is unchanged; only issuance moved.
 
-Dispatcher / driver / admin accounts are created by an admin through `POST /users/`.
-The first admin is seeded by `init_db` from `FIRST_SUPERUSER_PHONE` — **run
-`prestart.sh` before anyone logs in** (see §9).
+Two, and only two, ways to get an account:
+- **Customer**: automatically, the first time they place an order (guest checkout —
+  `orders.create_order` calls `get_or_create_user_by_phone`). After that, the same
+  phone number can log in via OTP.
+- **Dispatcher / driver / admin**: created by an admin through `POST /users/`. The
+  first admin is seeded by `init_db` from `FIRST_SUPERUSER_PHONE` — **run
+  `prestart.sh` before anyone logs in** (see §9).
+
+(Earlier revision: `/auth/otp/verify` used to auto-create a `customer` row for any
+unknown number. That let a dispatcher/driver whose account an admin hadn't created
+yet "log in" successfully into the wrong role instead of getting a clear error —
+fixed by moving customer creation to order placement and making verify read-only.)
 
 Getting a code in dev: `docker compose logs worker | grep stub-sms`, or
 `docker compose exec redis redis-cli get "otp:code:+2135XXXXXXXX"`.

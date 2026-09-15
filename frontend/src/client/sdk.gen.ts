@@ -41,9 +41,15 @@ export class AuthService {
     /**
      * Verify Otp
      *
-     * Verify a code and return a JWT. Creates the user (role=customer) on first
-     * successful login; pre-provisioned dispatcher/driver/admin accounts keep
-     * their role.
+     * Verify a code and return a JWT.
+     *
+     * This no longer creates the account: customers get one automatically the
+     * first time they place an order (see ``orders.create_order``), and
+     * dispatcher/driver/admin accounts are always created by an admin. If
+     * nobody has an account under this phone number yet, say so plainly
+     * instead of silently minting a customer account - that used to leave
+     * dispatchers/drivers who hadn't been added yet stuck with the wrong role
+     * after "logging in" successfully.
      */
     public static verifyOtp<ThrowOnError extends boolean = true>(options: Options<authVerifyOtpData, ThrowOnError>) {
         return (options.client ?? client).post<authVerifyOtpResponses, authVerifyOtpErrors, ThrowOnError>({

@@ -58,7 +58,12 @@
     "totalLine": "Total {{total}} DZD",
     "submit": "Place the order",
     "error": "Could not submit the order. Check the fields and try again.",
-    "staffArea": "Team area"
+    "staffArea": "Team area",
+    "missingPin": "delivery location",
+    "missingLandmark": "landmark",
+    "missingCommune": "commune",
+    "missingPhone": "phone number",
+    "missingFields": "Still missing: {{fields}}"
   },
   "track": {
     "title": "Order tracking",
@@ -91,7 +96,8 @@
     "code": "Verification code",
     "codePh": "123456",
     "verify": "Verify",
-    "useOther": "Use a different number"
+    "useOther": "Use a different number",
+    "noAccount": "There's no account for this number yet. Customers get one automatically the first time they place an order; dispatchers and drivers need an administrator to add them first."
   },
   "dispatch": {
     "title": "Dispatch board",

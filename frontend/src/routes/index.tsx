@@ -59,8 +59,13 @@ function OrderForm() {
     },
   })
 
-  const valid =
-    pin && landmark.trim() && commune.trim() && phone.trim() && liters >= 1
+  const missingFields = [
+    !pin && t("order.missingPin"),
+    !landmark.trim() && t("order.missingLandmark"),
+    !commune.trim() && t("order.missingCommune"),
+    !phone.trim() && t("order.missingPhone"),
+  ].filter((f): f is string => Boolean(f))
+  const valid = missingFields.length === 0 && liters >= 1
 
   return (
     <div>
@@ -149,6 +154,11 @@ function OrderForm() {
             </div>
             {mutation.isError && (
               <p className="text-sm text-destructive">{t("order.error")}</p>
+            )}
+            {!valid && missingFields.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {t("order.missingFields", { fields: missingFields.join(", ") })}
+              </p>
             )}
             <LoadingButton
               loading={mutation.isPending}
