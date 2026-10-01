@@ -93,7 +93,7 @@ services:
       FASTAPI_ENV: "development"
 
   flower:
-    image: mher/flower:2.0
+    image: mher/flower:2.1
     command: ["celery", "--broker=redis://redis:6379/0", "flower"]
     depends_on:
       - redis
